@@ -17,6 +17,4 @@ public interface Movable {
 
     void move();
     void changeDirection(Direction direction);
-    double getX();
-    double getY();
 }

@@ -4,16 +4,8 @@ import javafx.scene.image.Image;
 
 public class PacmanCharacter extends Character {
 
-    private double x;
-    private double y;
-    private Direction direction;
-    Image skin;
-
     public PacmanCharacter(double x, double y, Direction direction, Image skin) {
-        this.x = x;
-        this.y = y;
-        this.direction = direction;
-        this.skin = skin;
+        super(x, y, direction, skin);
     }
 
     @Override
