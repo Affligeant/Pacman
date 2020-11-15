@@ -18,4 +18,8 @@ public abstract class Character extends Entity implements Movable{
     public void changeDirection(Direction direction) {
         this.direction = direction;
     }
+
+    public Direction getDirection() {
+        return direction;
+    }
 }
