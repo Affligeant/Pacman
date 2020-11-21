@@ -37,7 +37,7 @@ public class MenuWindow extends Window {
             Character pacman = new Character(50, 50, imageCharacter, 55, 55, pacmanMovableBehavior);
             GameWindow gameWindow = new GameWindow(height, width);
             Render render = new Render(gameWindow.getGraphicsContext(), gameWindow.getScene());
-            render.getKeyEventManager().add(pacmanMovableBehavior, Arrays.asList("Z", "S", "D", "Q", "UP", "DOWN", "LEFT", "UP"));
+            render.getKeyEventManager().add(pacmanMovableBehavior, Arrays.asList("Z", "S", "D", "Q", "UP", "DOWN", "LEFT", "RIGHT"));
             render.addEntity(pacman);
             render.start();
             gameWindow.show();

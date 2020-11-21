@@ -30,6 +30,7 @@ public class Render extends AnimationTimer {
             gc.drawImage(e.skin, e.x, e.y);
         }
         for(Character c : characters) {
+            c.update();
             c.move(now-lastTimeICheckedMyWatch);
         }
         lastTimeICheckedMyWatch = now;
