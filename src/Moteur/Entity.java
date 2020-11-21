@@ -2,23 +2,28 @@ package Moteur;
 
 import javafx.scene.image.Image;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+
 public abstract class Entity {
     double x;
     double y;
     double vX;
     double vY;
     Image skin;
+    String imagePath;
     double height;
     double width;
 
-    public Entity(double x, double y, Image skin, double height, double width) {
+    public Entity(double x, double y, String imagePath, double height, double width) throws FileNotFoundException {
         this.x = x;
         this.y = y;
-        this.skin = skin;
+        this.imagePath = imagePath;
         this.height = height;
         this.width = width;
         this.vX = 0;
         this.vY = 0;
+        this.skin = new Image(new FileInputStream(imagePath), width, height, false, true);
     }
 
     public double getX() { return x; }
@@ -28,9 +33,15 @@ public abstract class Entity {
     public Image getSkin() { return skin; }
     public void setvX(double vX) { this.vX = vX; }
     public void setvY(double vY) { this.vY = vY; }
-    public void setSkin(Image skin) { this.skin = skin; }
-    public void setHeigth(double height) { this.height = height; }
-    public void setWidth(double width) { this.width = width; }
+    public void setPath(String path) throws FileNotFoundException {
+        this.imagePath = path;
+        this.skin = new Image(new FileInputStream(imagePath), width, height, false, true);
+    }
+    public void resize(double width, double height) throws FileNotFoundException {
+        this.width = width;
+        this.height = height;
+        this.skin = new Image(new FileInputStream(imagePath), width, height, false, true);
+    }
     public double getvX() { return vX; }
     public double getvY() { return vY; }
     public double getHeight() { return height; }

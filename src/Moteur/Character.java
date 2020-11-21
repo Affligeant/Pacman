@@ -2,6 +2,8 @@ package Moteur;
 
 import javafx.scene.image.Image;
 
+import java.io.FileNotFoundException;
+
 /**
  * Classe {@code Character} étend {@code Entity} et implémente {@code Movable}.
  * Principalement défini comme une entité mobile.
@@ -9,8 +11,8 @@ import javafx.scene.image.Image;
 public class Character extends Entity implements Movable{
     MovableBehavior movableBehavior;
 
-    public Character(double x, double y, Image skin, double width, double height, MovableBehavior movableBehavior) {
-        super(x, y, skin, height, width);
+    public Character(double x, double y, String imagePath, double width, double height, MovableBehavior movableBehavior) throws FileNotFoundException {
+        super(x, y, imagePath, height, width);
         this.movableBehavior = movableBehavior;
     }
 

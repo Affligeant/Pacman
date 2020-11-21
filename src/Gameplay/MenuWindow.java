@@ -26,15 +26,14 @@ public class MenuWindow extends Window {
         playButton.setFont(new Font("Calibri", width/20));
         borderPane.setCenter(playButton);
         playButton.setOnAction(event -> {
-            Image imageCharacter;
+            PacmanMovableBehavior pacmanMovableBehavior = new PacmanMovableBehavior();
+            Character pacman;
             try {
-                imageCharacter = new Image(new FileInputStream("./src/Images/cercle_jaune.png"));
+                pacman = new Character(50, 50, "./src/Images/cercle_jaune.png", 55, 55, pacmanMovableBehavior);
             } catch (FileNotFoundException e) {
-                System.out.println("Fichier non trouvé : src/Images/cercle_jaune.png");
+                System.out.println("Fichier non trouvé : ./src/Images/cercle_jaune.png");
                 return;
             }
-            PacmanMovableBehavior pacmanMovableBehavior = new PacmanMovableBehavior();
-            Character pacman = new Character(50, 50, imageCharacter, 55, 55, pacmanMovableBehavior);
             GameWindow gameWindow = new GameWindow(height, width);
             Render render = new Render(gameWindow.getGraphicsContext(), gameWindow.getScene());
             render.getKeyEventManager().add(pacmanMovableBehavior, Arrays.asList("Z", "S", "D", "Q", "UP", "DOWN", "LEFT", "RIGHT"));
