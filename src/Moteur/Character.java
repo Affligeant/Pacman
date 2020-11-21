@@ -8,18 +8,16 @@ import javafx.scene.image.Image;
  */
 public abstract class Character extends Entity implements Movable{
     Direction direction;
+    MovableBehavior movableBehavior;
 
-    public Character(double x, double y, Direction direction, Image skin) {
+    public Character(double x, double y, Direction direction, Image skin, MovableBehavior movableBehavior) {
         super(x, y, skin);
         this.direction = direction;
+        this.movableBehavior = movableBehavior;
     }
 
     @Override
-    public void changeDirection(Direction direction) {
-        this.direction = direction;
-    }
+    public void changeDirection(Direction direction) { this.direction = direction; }
 
-    public Direction getDirection() {
-        return direction;
-    }
+    public Direction getDirection() { return direction; }
 }

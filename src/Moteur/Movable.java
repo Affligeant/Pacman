@@ -2,7 +2,6 @@ package Moteur;
 
 /**
  * Interface {@code Movable} définit un mouvement avec les méthodes move, changeDirection(Direction).
- * Définit les getters getX et getY.
  */
 public interface Movable {
     enum Direction {

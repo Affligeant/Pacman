@@ -1,11 +1,7 @@
-package Moteur;
+package Gameplay;
 
 import javafx.application.Application;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 public class Main extends Application {
 
@@ -15,8 +11,5 @@ public class Main extends Application {
         menuWindow.show();
     }
 
-
-    public static void main(String[] args) {
-        launch(args);
-    }
+    public static void main(String[] args) { launch(args); }
 }

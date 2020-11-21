@@ -1,24 +1,51 @@
 package Moteur;
 
 import javafx.animation.AnimationTimer;
+import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class Render extends AnimationTimer {
 
-    PacmanCharacter pacmanCharacter;
-    PacmanEventManager pacmanEventManager;
+    ArrayList<Character> characters;
+    ArrayList<Entity> entities;
+    KeyEventManager keyEventManager;
     GraphicsContext gc;
 
-    public Render(PacmanCharacter pacmanCharacter, PacmanEventManager pacmanEventManager, GraphicsContext gc) {
-        this.pacmanCharacter = pacmanCharacter;
-        this.pacmanEventManager = pacmanEventManager;
+    public Render(GraphicsContext gc, Scene scene) {
         this.gc = gc;
+        this.keyEventManager = new KeyEventManager(scene);
+        characters = new ArrayList<>();
+        entities = new ArrayList<>();
     }
 
     @Override
     public void handle(long now) {
-        pacmanEventManager.handle(pacmanCharacter);
         gc.clearRect(0, 0, 10000, 10000); //À modifier plus tard
-        gc.drawImage(pacmanCharacter.skin, pacmanCharacter.getX(), pacmanCharacter.getY());
+        for(Entity e : entities) {
+            gc.drawImage(e.skin, e.x, e.y);
+        }
+    }
+
+    public void addEntity(Entity entity) {
+        this.entities.add(entity);
+        if(entity instanceof Character) {
+            characters.add((Character) entity);
+        }
+    }
+
+    public void addEntity(Collection<Entity> entities) {
+        for(Entity e : entities) {
+            this.entities.add(e);
+            if(e instanceof Character) {
+                characters.add((Character) e);
+            }
+        }
+    }
+
+    public KeyEventManager getKeyEventManager() {
+        return keyEventManager;
     }
 }
