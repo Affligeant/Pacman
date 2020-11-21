@@ -3,6 +3,7 @@ package Gameplay;
 import Moteur.KeyObserver;
 import Moteur.Movable;
 import Moteur.MovableBehavior;
+import Moteur.Character;
 
 public class PacmanMovableBehavior implements MovableBehavior, KeyObserver {
 
@@ -19,23 +20,23 @@ public class PacmanMovableBehavior implements MovableBehavior, KeyObserver {
         switch (input) {
             case "S":
             case "DOWN":
-                entity.changeDirection(Movable.Direction.BAS);
-                entity.move();
+                ((Character) entity).setvY(1);
+                ((Character) entity).setvX(0);
                 break;
             case "Q":
             case "LEFT":
-                entity.changeDirection(Movable.Direction.GAUCHE);
-                entity.move();
+                ((Character) entity).setvY(0);
+                ((Character) entity).setvX(-1);
                 break;
             case "Z":
             case "UP":
-                entity.changeDirection(Movable.Direction.HAUT);
-                entity.move();
+                ((Character) entity).setvY(-1);
+                ((Character) entity).setvX(0);
                 break;
             case "D":
             case "RIGHT":
-                entity.changeDirection(Movable.Direction.DROITE);
-                entity.move();
+                ((Character) entity).setvY(0);
+                ((Character) entity).setvX(1);
                 break;
             default:
                 break;

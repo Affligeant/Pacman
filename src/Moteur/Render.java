@@ -13,12 +13,14 @@ public class Render extends AnimationTimer {
     ArrayList<Entity> entities;
     KeyEventManager keyEventManager;
     GraphicsContext gc;
+    long lastTimeICheckedMyWatch;
 
     public Render(GraphicsContext gc, Scene scene) {
         this.gc = gc;
         this.keyEventManager = new KeyEventManager(scene);
         characters = new ArrayList<>();
         entities = new ArrayList<>();
+        lastTimeICheckedMyWatch = System.nanoTime();
     }
 
     @Override
@@ -27,6 +29,10 @@ public class Render extends AnimationTimer {
         for(Entity e : entities) {
             gc.drawImage(e.skin, e.x, e.y);
         }
+        for(Character c : characters) {
+            c.move(now-lastTimeICheckedMyWatch);
+        }
+        lastTimeICheckedMyWatch = now;
     }
 
     public void addEntity(Entity entity) {

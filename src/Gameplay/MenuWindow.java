@@ -1,9 +1,8 @@
 package Gameplay;
 
-import Moteur.KeyObserver;
-import Moteur.Movable;
 import Moteur.Render;
 import Moteur.Window;
+import Moteur.Character;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -35,7 +34,7 @@ public class MenuWindow extends Window {
                 return;
             }
             PacmanMovableBehavior pacmanMovableBehavior = new PacmanMovableBehavior();
-            PacmanCharacter pacman = new PacmanCharacter(50, 50, Movable.Direction.HAUT, imageCharacter, pacmanMovableBehavior);
+            Character pacman = new Character(50, 50, imageCharacter, 55, 55, pacmanMovableBehavior);
             GameWindow gameWindow = new GameWindow(height, width);
             Render render = new Render(gameWindow.getGraphicsContext(), gameWindow.getScene());
             render.getKeyEventManager().add(pacmanMovableBehavior, Arrays.asList("Z", "S", "D", "Q", "UP", "DOWN", "LEFT", "UP"));

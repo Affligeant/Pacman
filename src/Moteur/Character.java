@@ -6,18 +6,21 @@ import javafx.scene.image.Image;
  * Classe {@code Character} étend {@code Entity} et implémente {@code Movable}.
  * Principalement défini comme une entité mobile.
  */
-public abstract class Character extends Entity implements Movable{
-    Direction direction;
+public class Character extends Entity implements Movable{
     MovableBehavior movableBehavior;
 
-    public Character(double x, double y, Direction direction, Image skin, MovableBehavior movableBehavior) {
-        super(x, y, skin);
-        this.direction = direction;
+    public Character(double x, double y, Image skin, double width, double height, MovableBehavior movableBehavior) {
+        super(x, y, skin, height, width);
         this.movableBehavior = movableBehavior;
     }
 
-    @Override
-    public void changeDirection(Direction direction) { this.direction = direction; }
+    public void update() {
+        movableBehavior.update(this);
+    }
 
-    public Direction getDirection() { return direction; }
+    @Override
+    public void move(long time) {
+        this.setX(this.getX() + this.getvX());
+        this.setY(this.getY() + this.getvY());
+    }
 }
