@@ -5,15 +5,15 @@ import javafx.scene.image.Image;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-public abstract class Entity {
-    double x;
-    double y;
-    double vX;
-    double vY;
-    Image skin;
-    String imagePath;
-    double height;
-    double width;
+public class Entity {
+    private double x;
+    private double y;
+    private double vX;
+    private double vY;
+    private Image skin;
+    private String imagePath;
+    private double height;
+    private double width;
 
     public Entity(double x, double y, String imagePath, double height, double width) throws FileNotFoundException {
         this.x = x;

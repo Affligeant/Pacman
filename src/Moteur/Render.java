@@ -14,6 +14,7 @@ public class Render extends AnimationTimer {
     KeyEventManager keyEventManager;
     GraphicsContext gc;
     long lastTimeICheckedMyWatch;
+    CollisionObserver collisionObserver;
 
     public Render(GraphicsContext gc, Scene scene) {
         this.gc = gc;
@@ -21,19 +22,21 @@ public class Render extends AnimationTimer {
         characters = new ArrayList<>();
         entities = new ArrayList<>();
         lastTimeICheckedMyWatch = System.nanoTime();
+        collisionObserver = new CollisionObserver();
     }
 
     @Override
     public void handle(long now) {
         gc.clearRect(0, 0, 10000, 10000); //À modifier plus tard
         for(Entity e : entities) {
-            gc.drawImage(e.skin, e.x, e.y);
+            gc.drawImage(e.getSkin(), e.getX(), e.getY());
         }
         for(Character c : characters) {
             c.update();
             c.move(now-lastTimeICheckedMyWatch);
         }
         lastTimeICheckedMyWatch = now;
+        while(detectCollisions()){};
     }
 
     public void addEntity(Entity entity) {
@@ -54,5 +57,38 @@ public class Render extends AnimationTimer {
 
     public KeyEventManager getKeyEventManager() {
         return keyEventManager;
+    }
+
+    public void addObserver(CollisionManager collisionManager) {
+        collisionObserver.addObserver(collisionManager);
+    }
+
+    public boolean detectCollisions() {
+
+        boolean collisionOccured = false;
+
+        for(Character c : characters) {
+            for(Entity e : entities) {
+                if(c != e) {
+                    double baseX1 = c.getX();
+                    double baseY1 = c.getY();
+                    double finX1 = baseX1 + c.getWidth();
+                    double finY1 = baseY1 + c.getHeight();
+
+                    double baseX2 = e.getX();
+                    double baseY2 = e.getY();
+                    double finX2 = baseX2 + e.getWidth();
+                    double finY2 = baseY2 + e.getHeight();
+
+                    if(!(finX1 < baseX2) && baseX1 <= finX2 && !(finY1 < baseY2) && baseY1 <= finY2) {
+                        //Alors il y a collision
+                        CollisionEvent ce = new CollisionEvent(c, e, c.getClass().toString(), e.getClass().toString(), lastTimeICheckedMyWatch);
+                        collisionOccured = true;
+                        collisionObserver.notify(ce);
+                    }
+                }
+            }
+        }
+        return collisionOccured;
     }
 }
