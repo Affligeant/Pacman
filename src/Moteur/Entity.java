@@ -23,7 +23,7 @@ public abstract class Entity {
         this.width = width;
         this.vX = 0;
         this.vY = 0;
-        this.skin = new Image(new FileInputStream(imagePath), width, height, false, true);
+        this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
     }
 
     public double getX() { return x; }
@@ -35,12 +35,12 @@ public abstract class Entity {
     public void setvY(double vY) { this.vY = vY; }
     public void setPath(String path) throws FileNotFoundException {
         this.imagePath = path;
-        this.skin = new Image(new FileInputStream(imagePath), width, height, false, true);
+        this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
     }
     public void resize(double width, double height) throws FileNotFoundException {
         this.width = width;
         this.height = height;
-        this.skin = new Image(new FileInputStream(imagePath), width, height, false, true);
+        this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
     }
     public double getvX() { return vX; }
     public double getvY() { return vY; }

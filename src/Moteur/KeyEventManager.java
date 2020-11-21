@@ -12,18 +12,18 @@ public class KeyEventManager {
     HashMap<String, ArrayList<KeyObserver>> key;
 
     public KeyEventManager(Scene scene) {
-        scene.setOnKeyPressed(this::notify);
-        scene.setOnKeyReleased(this::notify);
+        scene.setOnKeyPressed(e -> notify(e, true));
+        scene.setOnKeyReleased(e -> notify(e, false));
         key = new HashMap<>();
         for(KeyCode c : KeyCode.values()) {
             key.put(c.toString(), new ArrayList<>());
         }
     }
 
-    public void notify(KeyEvent keyEvent) {
+    public void notify(KeyEvent keyEvent, boolean pressed) {
         String keyCode = keyEvent.getCode().toString();
         for(KeyObserver k : key.get(keyCode)) {
-            k.update(keyCode);
+            k.update(keyCode, pressed);
         }
     }
 

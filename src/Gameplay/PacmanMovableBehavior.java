@@ -10,9 +10,8 @@ public class PacmanMovableBehavior implements MovableBehavior, KeyObserver {
     String input = "";
 
     @Override
-    public void update(String key) {
-        if(input.equals(key)) { input = ""; }
-        else { input = key; }
+    public void update(String key, boolean pressed) {
+        if(pressed) { input = key; }
     }
 
     @Override
