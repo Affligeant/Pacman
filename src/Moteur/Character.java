@@ -15,7 +15,7 @@ public class Character extends Entity implements Movable{
     private long old_move;
 
     public Character(double x, double y, String imagePath, double width, double height, MovableBehavior movableBehavior, String type) throws FileNotFoundException {
-        super(x, y, imagePath, height, width, false, type);
+        super(x, y, imagePath, height, width, false);
         this.movableBehavior = movableBehavior;
         this.vX = 0;
         this.vY = 0;

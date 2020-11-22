@@ -18,7 +18,7 @@ public class CollisionObserver {
     public boolean notify(CollisionEvent collisionEvent) {
         boolean triggered = false;
         for(CollisionManager cm : observers) {
-            triggered = cm.autoPhysicHandle(collisionEvent);
+            triggered = cm.update(collisionEvent);
         }
         return triggered;
     }
@@ -26,8 +26,10 @@ public class CollisionObserver {
     public boolean notify(Collection<CollisionEvent> collisionEvents) {
         boolean triggered = false;
         for(CollisionManager cm : observers) {
-            if(cm.autoPhysicHandle(collisionEvents)) {
-                triggered = true;
+            for(CollisionEvent ce : collisionEvents) {
+                if(cm.update(ce)) {
+                    triggered = true;
+                }
             }
         }
         return triggered;

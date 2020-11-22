@@ -13,9 +13,8 @@ public class Entity {
     private double height;
     private double width;
     private final boolean physical;
-    private final String type;
 
-    public Entity(double x, double y, String imagePath, double height, double width, boolean physical, String type) throws FileNotFoundException {
+    public Entity(double x, double y, String imagePath, double height, double width, boolean physical) throws FileNotFoundException {
         this.x = x;
         this.y = y;
         this.imagePath = imagePath;
@@ -23,7 +22,6 @@ public class Entity {
         this.width = width;
         this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
         this.physical = physical;
-        this.type = type;
     }
 
     public double getX() { return x; }
@@ -43,5 +41,4 @@ public class Entity {
     public double getHeight() { return height; }
     public double getWidth() { return width; }
     public boolean isPhysical() { return physical; }
-    public String getType() { return type; }
 }

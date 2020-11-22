@@ -20,9 +20,7 @@ public abstract class Window extends Stage {
         init();
     }
 
-    public void setBackground(Color color) {
-        getScene().setFill(color);
-    }
+    public void setBackground(Color color) { getScene().setFill(color); }
 
     /**
      * Called when constructing the window. Specify here everything that needs to be instantiated
