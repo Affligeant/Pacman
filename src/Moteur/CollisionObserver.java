@@ -23,4 +23,14 @@ public class CollisionObserver {
         return triggered;
     }
 
+    public boolean notify(Collection<CollisionEvent> collisionEvents) {
+        boolean triggered = false;
+        for(CollisionManager cm : observers) {
+            if(cm.autoPhysicHandle(collisionEvents)) {
+                triggered = true;
+            }
+        }
+        return triggered;
+    }
+
 }

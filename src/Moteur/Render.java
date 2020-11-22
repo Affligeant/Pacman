@@ -6,6 +6,7 @@ import javafx.scene.canvas.GraphicsContext;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 public class Render extends AnimationTimer {
 
@@ -58,6 +59,22 @@ public class Render extends AnimationTimer {
         }
     }
 
+    public void removeEntity(Collection<Entity> entities) {
+        for(Entity e : entities) {
+            this.entities.remove(e);
+            if(e instanceof Character) {
+                characters.remove(e);
+            }
+        }
+    }
+
+    public void removeEntity(Entity entity) {
+        this.entities.remove(entity);
+        if(entity instanceof Character) {
+            characters.remove(entity);
+        }
+    }
+
     public KeyEventManager getKeyEventManager() { return keyEventManager; }
 
     public void addObserver(CollisionManager collisionManager) { collisionObserver.addObserver(collisionManager); }
@@ -89,6 +106,7 @@ public class Render extends AnimationTimer {
                 }
             }
         }
+
         return collisionOccured;
     }
 }

@@ -1,5 +1,7 @@
 package Moteur;
 
+import java.util.Collection;
+
 public abstract class CollisionManager {
 
     boolean autoPhysicHandled;
@@ -19,6 +21,16 @@ public abstract class CollisionManager {
     public CollisionManager() { this(true); }
 
     public abstract boolean update(CollisionEvent collisionEvent);
+
+    public boolean autoPhysicHandle(Collection<CollisionEvent> collisionEvents) {
+        boolean isTriggered = false;
+        for(CollisionEvent ce : collisionEvents) {
+            if(autoPhysicHandle(ce)) {
+                isTriggered = true;
+            }
+        }
+        return isTriggered;
+    }
 
     public boolean autoPhysicHandle(CollisionEvent collisionEvent) {
         if(autoPhysicHandled) {

@@ -61,7 +61,7 @@ public class MenuWindow extends Window {
                 System.out.println(e.getMessage());
                 return;
             }
-            render.addObserver(new PacmanCollisionManager());
+            render.addObserver(new PacmanCollisionManager(render));
             render.start();
             gameWindow.show();
             this.hide();
