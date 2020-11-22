@@ -1,7 +1,10 @@
 package Gameplay;
 
-import Moteur.*;
 import Moteur.Character;
+import Moteur.Entity;
+import Moteur.Render;
+import Moteur.Tools;
+import Moteur.Window;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
@@ -51,7 +54,7 @@ public class MenuWindow extends Window {
             Render render = new Render(gameWindow.getGraphicsContext(), gameWindow.getScene());
             render.getKeyEventManager().add(pacmanMovableBehavior, Arrays.asList("Z", "S", "D", "Q", "UP", "DOWN", "LEFT", "RIGHT"));
             render.addEntity(pacman);
-            render.addEntity(entityArrayList);
+            if(entityArrayList != null) { render.addEntity(entityArrayList); }
             try {
                 render.addEntity(new Entity(positions[0], positions[1], "./src/Images/chemin.png", 30, 30, false,"Chemin"));
             } catch (FileNotFoundException e) {

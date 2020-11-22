@@ -81,7 +81,7 @@ public class Render extends AnimationTimer {
 
                     if(!(finX1 < baseX2) && !(baseX1 > finX2) && !(finY1 < baseY2) && !(baseY1 > finY2)) {
                         //Alors il y a collision
-                        CollisionEvent ce = new CollisionEvent(c, e, c.getClass().toString(), e.getClass().toString(), lastTimeICheckedMyWatch);
+                        CollisionEvent ce = new CollisionEvent(c, e, lastTimeICheckedMyWatch);
                         if(collisionObserver.notify(ce)) {
                             collisionOccured = true;
                         }

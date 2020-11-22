@@ -12,10 +12,13 @@ public class PacmanMovableBehavior implements MovableBehavior, KeyObserver {
     @Override
     public void update(String key, boolean pressed) {
         if(pressed) { input = key; }
+        else if(input.equals(key)) { input = ""; }
     }
 
     @Override
     public void update(Movable entity) {
+        ((Character) entity).setOld_vX(((Character) entity).getvX());
+        ((Character) entity).setOld_vY(((Character) entity).getvY());
         switch (input) {
             case "S":
             case "DOWN":
