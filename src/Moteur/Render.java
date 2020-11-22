@@ -3,6 +3,8 @@ package Moteur;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,16 +29,20 @@ public class Render extends AnimationTimer {
 
     @Override
     public void handle(long now) {
-        gc.clearRect(0, 0, 10000, 10000); //À modifier plus tard
+        gc.setFill(Color.BLACK);
+        gc.clearRect(0, 0, 10000, 10000);
         for(Entity e : entities) {
-            gc.drawImage(e.getSkin(), e.getX(), e.getY());
+            if(!characters.contains(e)) {
+                gc.drawImage(e.getSkin(), e.getX(), e.getY());
+            }
         }
         for(Character c : characters) {
+            gc.drawImage(c.getSkin(), c.getX(), c.getY());
             c.update();
             c.move(now-lastTimeICheckedMyWatch);
         }
         lastTimeICheckedMyWatch = now;
-        while(detectCollisions()){};
+        while(detectCollisions()){}
     }
 
     public void addEntity(Entity entity) {
@@ -55,13 +61,9 @@ public class Render extends AnimationTimer {
         }
     }
 
-    public KeyEventManager getKeyEventManager() {
-        return keyEventManager;
-    }
+    public KeyEventManager getKeyEventManager() { return keyEventManager; }
 
-    public void addObserver(CollisionManager collisionManager) {
-        collisionObserver.addObserver(collisionManager);
-    }
+    public void addObserver(CollisionManager collisionManager) { collisionObserver.addObserver(collisionManager); }
 
     public boolean detectCollisions() {
 
@@ -83,8 +85,9 @@ public class Render extends AnimationTimer {
                     if(!(finX1 < baseX2) && baseX1 <= finX2 && !(finY1 < baseY2) && baseY1 <= finY2) {
                         //Alors il y a collision
                         CollisionEvent ce = new CollisionEvent(c, e, c.getClass().toString(), e.getClass().toString(), lastTimeICheckedMyWatch);
-                        collisionOccured = true;
-                        collisionObserver.notify(ce);
+                        if(collisionObserver.notify(ce)) {
+                            collisionOccured = true;
+                        }
                     }
                 }
             }

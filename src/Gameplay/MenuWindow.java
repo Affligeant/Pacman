@@ -1,22 +1,23 @@
 package Gameplay;
 
-import Moteur.Render;
-import Moteur.Window;
+import Moteur.*;
 import Moteur.Character;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class MenuWindow extends Window {
 
-    public MenuWindow(double height, double width) {
-        super(height, width);
-    }
+    public MenuWindow(double height, double width) { super(height, width); }
 
     public void init() {
+        this.setBackground(Color.BLACK);
         Button playButton = new Button("P L A Y");
         playButton.setMinSize(width/2, height/5);
         playButton.setAlignment(Pos.CENTER);
@@ -27,15 +28,24 @@ public class MenuWindow extends Window {
             PacmanMovableBehavior pacmanMovableBehavior = new PacmanMovableBehavior();
             Character pacman;
             try {
-                pacman = new Character(50, 50, "./src/Images/cercle_jaune.png", 55, 55, pacmanMovableBehavior);
+                pacman = new Character(50, 50, "./src/Images/cercle_jaune.png", 30, 30, pacmanMovableBehavior);
             } catch (FileNotFoundException e) {
-                System.out.println("Fichier non trouvé : ./src/Images/cercle_jaune.png");
+                System.out.println(e.getMessage());
                 return;
             }
             GameWindow gameWindow = new GameWindow(height, width);
+            gameWindow.setBackground(Color.BLACK);
             Render render = new Render(gameWindow.getGraphicsContext(), gameWindow.getScene());
             render.getKeyEventManager().add(pacmanMovableBehavior, Arrays.asList("Z", "S", "D", "Q", "UP", "DOWN", "LEFT", "RIGHT"));
             render.addEntity(pacman);
+            ArrayList<Entity> entityArrayList;
+            try {
+                entityArrayList = Tools.mapFromFile("./src/Gameplay/niveau1.map", 30);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                return;
+            }
+            render.addEntity(entityArrayList);
             render.start();
             gameWindow.show();
             this.hide();

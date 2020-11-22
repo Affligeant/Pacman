@@ -19,10 +19,12 @@ public class CollisionObserver {
         observers.addAll(collisionManagers);
     }
 
-    public void notify(CollisionEvent collisionEvent) {
+    public boolean notify(CollisionEvent collisionEvent) {
+        boolean triggered = false;
         for(CollisionManager cm : observers) {
-            cm.update(collisionEvent);
+            triggered = cm.update(collisionEvent);
         }
+        return triggered;
     }
 
 }

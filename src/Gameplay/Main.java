@@ -7,7 +7,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-        MenuWindow menuWindow = new MenuWindow(800, 800);
+        MenuWindow menuWindow = new MenuWindow(31*30, 28*30);
         menuWindow.show();
     }
 

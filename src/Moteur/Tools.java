@@ -9,7 +9,7 @@ import java.util.List;
 
 public abstract class Tools {
 
-    public ArrayList<Entity> mapFromFile(String path, double tailleCase) throws IOException {
+    public static ArrayList<Entity> mapFromFile(String path, double tailleCase) throws IOException {
 
         //Dictionnaire d'images
         HashMap<Integer, String> imagePaths = new HashMap<>();
@@ -17,6 +17,8 @@ public abstract class Tools {
         List<String> data = Files.readAllLines(Paths.get(path));
 
         //Initialisation du dictionnaire d'images
+
+        int nbLignes = 0;
 
         String[] entityImage;
         for(String s : data) {
@@ -28,15 +30,19 @@ public abstract class Tools {
                     return null;
                 }
                 imagePaths.put(Integer.valueOf(entityImage[0]), entityImage[1]);
-                data.remove(s);
+                nbLignes++;
             }
             else {
                 //Si la taille est inférieure à 2, alors on a pas trouvé d'autre association Id:ImagePath.
-                if(s.equals("\n")) {
-                    data.remove(s);
+                if(s.equals("\n") || s.equals("")) {
+                    nbLignes++;
                 }
                 break;
             }
+        }
+
+        if (nbLignes > 0) {
+            data.subList(0, nbLignes).clear();
         }
 
         //Ajout des entités
@@ -49,8 +55,12 @@ public abstract class Tools {
             lineEntities = data.get(i).split(" ");
 
             for(int j = 0; j < lineEntities.length; j++) {
-                double x = i*tailleCase;
-                double y = j*tailleCase;
+                double x = j*tailleCase;
+                double y = i*tailleCase;
+                if(!imagePaths.containsKey(Integer.valueOf(lineEntities[j]))) {
+                    System.out.println("Erreur : impossible de trouver d'image associée à l'identiticateur " + lineEntities[j]);
+                    return null;
+                }
                 String imagePath = imagePaths.get(Integer.valueOf(lineEntities[j]));
                 Entity e = new Entity(x, y, imagePath, tailleCase, tailleCase);
                 entities.add(e);
@@ -59,23 +69,29 @@ public abstract class Tools {
         return entities;
     }
 
-    public Integer[][] mapFromFile(String path) throws IOException {
+    public static Integer[][] mapFromFile(String path) throws IOException {
         List<String> data = Files.readAllLines(Paths.get(path));
+
+        int nbLignes = 0;
 
         String[] entityImage;
         for(String s : data) {
             entityImage = s.split(":");
             if(entityImage.length == 2) {
                 //Association Id:ImagePath
-                data.remove(s);
+                nbLignes++;
             }
             else {
                 //Si la taille est inférieure à 2, alors on a pas trouvé d'autre association Id:ImagePath.
-                if(s.equals("\n")) {
-                    data.remove(s);
+                if(s.equals("\n") || s.equals("")) {
+                    nbLignes++;
                 }
                 break;
             }
+        }
+
+        if (nbLignes > 0) {
+            data.subList(0, nbLignes).clear();
         }
 
         //Largeur = taille d'une ligne. Longueur = taille d'une colonne.
@@ -86,7 +102,7 @@ public abstract class Tools {
         for(int i = 0; i < data.size(); i++) {
             lineEntities = data.get(i).split(" ");
             for(int j = 0; j < lineEntities.length; j++) {
-                matrice[i][j] = Integer.valueOf(lineEntities[j]);
+                matrice[j][i] = Integer.valueOf(lineEntities[j]);
             }
         }
 
