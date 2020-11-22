@@ -35,12 +35,16 @@ public class Render extends AnimationTimer {
             }
         }
         for(Character c : characters) {
-            gc.drawImage(c.getSkin(), c.getX(), c.getY());
             c.update();
             c.move(now-lastTimeICheckedMyWatch);
         }
+
         lastTimeICheckedMyWatch = now;
         while(detectCollisions()){}
+
+        for(Character c : characters) {
+            gc.drawImage(c.getSkin(), c.getX(), c.getY());
+        }
     }
 
     public void addEntity(Entity entity) {
