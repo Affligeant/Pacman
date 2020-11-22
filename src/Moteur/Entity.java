@@ -8,22 +8,21 @@ import java.io.FileNotFoundException;
 public class Entity {
     private double x;
     private double y;
-    private double vX;
-    private double vY;
     private Image skin;
     private String imagePath;
     private double height;
     private double width;
+    private boolean physical;
+    private String type;
 
-    public Entity(double x, double y, String imagePath, double height, double width) throws FileNotFoundException {
+    public Entity(double x, double y, String imagePath, double height, double width, boolean physical, String type) throws FileNotFoundException {
         this.x = x;
         this.y = y;
         this.imagePath = imagePath;
         this.height = height;
         this.width = width;
-        this.vX = 0;
-        this.vY = 0;
         this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
+        this.physical = physical;
     }
 
     public double getX() { return x; }
@@ -31,8 +30,6 @@ public class Entity {
     public void setX(double x) { this.x = x; }
     public void setY(double y) { this.y = y; }
     public Image getSkin() { return skin; }
-    public void setvX(double vX) { this.vX = vX; }
-    public void setvY(double vY) { this.vY = vY; }
     public void setPath(String path) throws FileNotFoundException {
         this.imagePath = path;
         this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
@@ -42,8 +39,8 @@ public class Entity {
         this.height = height;
         this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
     }
-    public double getvX() { return vX; }
-    public double getvY() { return vY; }
     public double getHeight() { return height; }
     public double getWidth() { return width; }
+    public boolean isPhysical() { return physical; }
+    public String getType() { return type; }
 }

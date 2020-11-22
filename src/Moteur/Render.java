@@ -3,8 +3,6 @@ package Moteur;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -29,7 +27,6 @@ public class Render extends AnimationTimer {
 
     @Override
     public void handle(long now) {
-        gc.setFill(Color.BLACK);
         gc.clearRect(0, 0, 10000, 10000);
         for(Entity e : entities) {
             if(!characters.contains(e)) {
@@ -74,15 +71,15 @@ public class Render extends AnimationTimer {
                 if(c != e) {
                     double baseX1 = c.getX();
                     double baseY1 = c.getY();
-                    double finX1 = baseX1 + c.getWidth();
-                    double finY1 = baseY1 + c.getHeight();
+                    double finX1 = baseX1 + c.getWidth() - 1;
+                    double finY1 = baseY1 + c.getHeight() - 1;
 
                     double baseX2 = e.getX();
                     double baseY2 = e.getY();
-                    double finX2 = baseX2 + e.getWidth();
-                    double finY2 = baseY2 + e.getHeight();
+                    double finX2 = baseX2 + e.getWidth() - 1;
+                    double finY2 = baseY2 + e.getHeight() - 1;
 
-                    if(!(finX1 < baseX2) && baseX1 <= finX2 && !(finY1 < baseY2) && baseY1 <= finY2) {
+                    if(!(finX1 < baseX2) && !(baseX1 > finX2) && !(finY1 < baseY2) && !(baseY1 > finY2)) {
                         //Alors il y a collision
                         CollisionEvent ce = new CollisionEvent(c, e, c.getClass().toString(), e.getClass().toString(), lastTimeICheckedMyWatch);
                         if(collisionObserver.notify(ce)) {

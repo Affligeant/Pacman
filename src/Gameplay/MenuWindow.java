@@ -25,10 +25,23 @@ public class MenuWindow extends Window {
         playButton.setFont(new Font("Calibri", width/20));
         borderPane.setCenter(playButton);
         playButton.setOnAction(event -> {
+            ArrayList<Entity> entityArrayList;
+            try {
+                entityArrayList = Tools.mapFromFile("./src/Gameplay/niveau1.map", 30);
+            } catch (IOException e) {
+                System.out.println(e.getMessage());
+                return;
+            }
+            double[] positions; //position par défaut
+            positions = Tools.getSpecial_areas().get("spawn");
+            if (positions == null) {
+                System.out.println("Impossible de trouver le point de spawn dans le fichier");
+                return;
+            }
             PacmanMovableBehavior pacmanMovableBehavior = new PacmanMovableBehavior();
             Character pacman;
             try {
-                pacman = new Character(50, 50, "./src/Images/cercle_jaune.png", 30, 30, pacmanMovableBehavior);
+                pacman = new Character(positions[0], positions[1], "./src/Images/cercle_jaune.png", 30, 30, pacmanMovableBehavior, "Pacman");
             } catch (FileNotFoundException e) {
                 System.out.println(e.getMessage());
                 return;
@@ -38,14 +51,14 @@ public class MenuWindow extends Window {
             Render render = new Render(gameWindow.getGraphicsContext(), gameWindow.getScene());
             render.getKeyEventManager().add(pacmanMovableBehavior, Arrays.asList("Z", "S", "D", "Q", "UP", "DOWN", "LEFT", "RIGHT"));
             render.addEntity(pacman);
-            ArrayList<Entity> entityArrayList;
+            render.addEntity(entityArrayList);
             try {
-                entityArrayList = Tools.mapFromFile("./src/Gameplay/niveau1.map", 30);
-            } catch (IOException e) {
+                render.addEntity(new Entity(positions[0], positions[1], "./src/Images/chemin.png", 30, 30, false,"Chemin"));
+            } catch (FileNotFoundException e) {
                 System.out.println(e.getMessage());
                 return;
             }
-            render.addEntity(entityArrayList);
+            render.addObserver(new PacmanCollisionManager());
             render.start();
             gameWindow.show();
             this.hide();

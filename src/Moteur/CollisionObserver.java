@@ -11,18 +11,14 @@ public class CollisionObserver {
         this.observers = new ArrayList<>();
     }
 
-    public void addObserver(CollisionManager collisionManager) {
-        observers.add(collisionManager);
-    }
+    public void addObserver(CollisionManager collisionManager) { observers.add(collisionManager); }
 
-    public void addObserver(Collection<CollisionManager> collisionManagers) {
-        observers.addAll(collisionManagers);
-    }
+    public void addObserver(Collection<CollisionManager> collisionManagers) { observers.addAll(collisionManagers); }
 
     public boolean notify(CollisionEvent collisionEvent) {
         boolean triggered = false;
         for(CollisionManager cm : observers) {
-            triggered = cm.update(collisionEvent);
+            triggered = cm.autoPhysicHandle(collisionEvent);
         }
         return triggered;
     }
