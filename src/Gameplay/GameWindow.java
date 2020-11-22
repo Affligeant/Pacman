@@ -3,6 +3,7 @@ package Gameplay;
 import Moteur.Window;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 public class GameWindow extends Window {
 
@@ -12,6 +13,7 @@ public class GameWindow extends Window {
 
     public void init() {
         this.canvas = new Canvas(width, height);
+        canvas.getGraphicsContext2D().setFill(Color.BLACK);
         borderPane.setCenter(canvas);
     }
 

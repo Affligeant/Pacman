@@ -45,8 +45,7 @@ public class MenuWindow extends Window {
                 return;
             }
             GameWindow gameWindow = new GameWindow(height, width);
-            gameWindow.setBackground(Color.BLACK);
-            Render render = new Render(gameWindow.getGraphicsContext(), gameWindow.getScene());
+            Render render = new Render(gameWindow.getGraphicsContext(), gameWindow.getScene(), width, height);
             render.getKeyEventManager().add(pacmanMovableBehavior, Arrays.asList("Z", "S", "D", "Q", "UP", "DOWN", "LEFT", "RIGHT"));
             render.addEntity(pacman);
             if(entityArrayList != null) { render.addEntity(entityArrayList); }

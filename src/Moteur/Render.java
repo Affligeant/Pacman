@@ -3,10 +3,10 @@ package Moteur;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 
 public class Render extends AnimationTimer {
 
@@ -16,24 +16,31 @@ public class Render extends AnimationTimer {
     GraphicsContext gc;
     long lastTimeICheckedMyWatch;
     CollisionObserver collisionObserver;
+    double width;
+    double height;
 
-    public Render(GraphicsContext gc, Scene scene) {
+    public Render(GraphicsContext gc, Scene scene, double width, double height) {
         this.gc = gc;
         this.keyEventManager = new KeyEventManager(scene);
         characters = new ArrayList<>();
         entities = new ArrayList<>();
         lastTimeICheckedMyWatch = System.nanoTime();
         collisionObserver = new CollisionObserver();
+        this.width = width;
+        this.height = height;
     }
 
     @Override
     public void handle(long now) {
-        gc.clearRect(0, 0, 10000, 10000);
+        gc.clearRect(0, 0, width, height);
+        gc.fillRect(0, 0, width, height);
+
         for(Entity e : entities) {
             if(!characters.contains(e)) {
                 gc.drawImage(e.getSkin(), e.getX(), e.getY());
             }
         }
+
         for(Character c : characters) {
             c.update();
             c.move(now-lastTimeICheckedMyWatch);
