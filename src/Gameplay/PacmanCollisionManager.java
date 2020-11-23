@@ -5,12 +5,11 @@ import Moteur.CollisionEvent;
 import Moteur.CollisionManager;
 import Moteur.Entity;
 
-public class PacmanCollisionManager extends CollisionManager {
+public class PacmanCollisionManager implements CollisionManager {
 
     Character pacman;
 
     PacmanCollisionManager(Character pacman) {
-        //On ne veut pas gérer les collisions avec les murs automatiquement
         super();
         this.pacman = pacman;
     }
@@ -34,28 +33,10 @@ public class PacmanCollisionManager extends CollisionManager {
     }
 
     private boolean pacmanCollidesPellet(Character pacman, Pellet pellet) {
-        double xIn;
-        double yIn;
+        if(pellet.isAte()) { return false; }
 
-        if(pacman.getX() >= pellet.getX() && pacman.getX() < pellet.getX() + pellet.getWidth()) {
-            xIn = pellet.getX() + pellet.getWidth() - pacman.getX();
-        }
-        else if(pellet.getX() > pacman.getX() && pellet.getX() < pacman.getX() + pacman.getWidth()){
-            xIn = pacman.getX() + pacman.getWidth() - pellet.getX();
-        }
-        else {
-            xIn = 0;
-        }
-
-        if(pacman.getY() >= pellet.getY() && pacman.getY() < pellet.getY() + pellet.getHeight()) {
-            yIn = pellet.getY() + pellet.getWidth() - pacman.getY();
-        }
-        else if(pellet.getY() > pacman.getY() && pellet.getY() < pacman.getY() + pacman.getHeight()) {
-            yIn = pacman.getY() + pacman.getWidth() - pellet.getY();
-        }
-        else {
-            yIn = 0;
-        }
+        double xIn = xIn(pacman, pellet);
+        double yIn = yIn(pacman, pellet);
 
         if(xIn > pellet.getWidth() / 2 && yIn > pellet.getHeight() / 2) {
             pellet.eat();
@@ -64,7 +45,49 @@ public class PacmanCollisionManager extends CollisionManager {
     }
 
     private boolean pacmanCollidesSpecial(Character pacman, SpecialPellet special) {
+        if(special.isAte()) { return false; }
+
+        double xIn = xIn(pacman, special);
+        double yIn = yIn(pacman, special);
+
+        if(xIn > special.getWidth() / 2 && yIn > special.getHeight() / 2) {
+            special.eat();
+        }
         return false;
+    }
+
+    private double xIn(Entity e1, Entity e2) {
+
+        double xIn;
+
+        if(e1.getX() >= e2.getX() && e1.getX() < e2.getX() + e2.getWidth()) {
+            xIn = e2.getX() + e2.getWidth() - e1.getX();
+        }
+        else if(e2.getX() > e1.getX() && e2.getX() < e1.getX() + e1.getWidth()){
+            xIn = e1.getX() + e1.getWidth() - e2.getX();
+        }
+        else {
+            xIn = 0;
+        }
+
+        return xIn;
+    }
+
+    private double yIn(Entity e1, Entity e2) {
+
+        double yIn;
+
+        if(e1.getY() >= e2.getY() && e1.getY() < e2.getY() + e2.getHeight()) {
+            yIn = e2.getY() + e2.getWidth() - e1.getY();
+        }
+        else if(e2.getY() > e1.getY() && e2.getY() < e1.getY() + e1.getHeight()) {
+            yIn = e1.getY() + e1.getWidth() - e2.getY();
+        }
+        else {
+            yIn = 0;
+        }
+
+        return yIn;
     }
 
     private void rectifyPlacement(Character pacman) {

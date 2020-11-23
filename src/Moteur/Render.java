@@ -3,7 +3,6 @@ package Moteur;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,6 +18,15 @@ public class Render extends AnimationTimer {
     double width;
     double height;
 
+    /**
+     * Main class of a graphical game, used to display entities and notify observers.
+     * This constructor needs the graphical context and it's size as well as the scene associated.
+     *
+     * @param gc The graphicsContext in which the Render is display entities.
+     * @param scene The scene associated with the graphicsContext, used to link the KeyEventManager.
+     * @param width Width of the display space, to refresh it.
+     * @param height Height of the display space, to refresh it.
+     */
     public Render(GraphicsContext gc, Scene scene, double width, double height) {
         this.gc = gc;
         this.keyEventManager = new KeyEventManager(scene);
@@ -30,13 +38,18 @@ public class Render extends AnimationTimer {
         this.height = height;
     }
 
+    /**
+     * Main method of rendering, triggered at each frame.
+     *
+     * @param now Time given by Timers from extending AnimationTimer.
+     */
     @Override
     public void handle(long now) {
         gc.clearRect(0, 0, width, height);
         gc.fillRect(0, 0, width, height);
 
         for(Entity e : entities) {
-            if(!characters.contains(e)) {
+            if(!(e instanceof Character)) {
                 gc.drawImage(e.getSkin(), e.getX(), e.getY());
             }
         }
@@ -54,6 +67,11 @@ public class Render extends AnimationTimer {
         }
     }
 
+    /**
+     * Adds a single entity to the Render.
+     *
+     * @param entity The entity to add.
+     */
     public void addEntity(Entity entity) {
         this.entities.add(entity);
         if(entity instanceof Character) {
@@ -61,6 +79,11 @@ public class Render extends AnimationTimer {
         }
     }
 
+    /**
+     * Adds a collection of entities to the Render.
+     *
+     * @param entities The entities to add.
+     */
     public void addEntity(Collection<Entity> entities) {
         for(Entity e : entities) {
             this.entities.add(e);
@@ -70,6 +93,11 @@ public class Render extends AnimationTimer {
         }
     }
 
+    /**
+     * Removes a collection of entities.
+     *
+     * @param entities The entities to remove.
+     */
     public void removeEntity(Collection<Entity> entities) {
         for(Entity e : entities) {
             this.entities.remove(e);
@@ -79,6 +107,11 @@ public class Render extends AnimationTimer {
         }
     }
 
+    /**
+     * Removes a single entity.
+     *
+     * @param entity The entity to remove.
+     */
     public void removeEntity(Entity entity) {
         this.entities.remove(entity);
         if(entity instanceof Character) {
@@ -86,10 +119,23 @@ public class Render extends AnimationTimer {
         }
     }
 
+    /**
+     * Used to add keys to listen to.
+     *
+     * @return A {@code KeyEventManager}.
+     */
     public KeyEventManager getKeyEventManager() { return keyEventManager; }
 
+    /** Add an CollisionManager observer, which will be notified at every collision.
+     * @param collisionManager The collisionManager to add.
+     */
     public void addObserver(CollisionManager collisionManager) { collisionObserver.addObserver(collisionManager); }
 
+    /** Used to detect collisions between fixed Entities and moving Entities,
+     * and between moving Entities.
+     * @return {@code True} if the notifying of a collision has potentially
+     * triggered a new collision and needs re-check.
+     */
     public boolean detectCollisions() {
 
         boolean collisionOccured = false;

@@ -3,8 +3,8 @@ package Moteur;
 import java.io.FileNotFoundException;
 
 /**
- * Classe {@code Character} étend {@code Entity} et implémente {@code Movable}.
- * Principalement défini comme une entité mobile.
+ * {@code Class Character} extends {@code Entity} and implements {@code Movable}.
+ * Is thus seen as the basic movable entity.
  */
 public class Character extends Entity implements Movable{
     MovableBehavior movableBehavior;
@@ -14,7 +14,16 @@ public class Character extends Entity implements Movable{
     private double old_vY;
     private long old_move;
 
-    public Character(double x, double y, String imagePath, double width, double height, MovableBehavior movableBehavior, String type) throws FileNotFoundException {
+    /**
+     * @param x Position {@code x} of the character.
+     * @param y Position {@code y} of the character.
+     * @param imagePath Path of the {@code Image} associated to the character.
+     * @param width Desired {@code width} of the character. Appearance is resized to this width.
+     * @param height Desired {@code height} of the character. Appearance is resized to this height.
+     * @param movableBehavior The behavior associated to the character.
+     * @throws FileNotFoundException When the image file can't be found.
+     */
+    public Character(double x, double y, String imagePath, double width, double height, MovableBehavior movableBehavior) throws FileNotFoundException {
         super(x, y, imagePath, height, width, false);
         this.movableBehavior = movableBehavior;
         this.vX = 0;
@@ -35,6 +44,11 @@ public class Character extends Entity implements Movable{
 
     public void update() { movableBehavior.update(this); }
 
+    /**
+     * Used to move the character depending on it's position vectors.
+     *
+     * @param time The actual time in nanoseconds elapsed between the last call to this method and now.
+     */
     @Override
     public void move(long time) {
         old_move = time;
@@ -43,6 +57,10 @@ public class Character extends Entity implements Movable{
         this.setY(this.getY() + (this.getvY() * temps));
     }
 
+    /**
+     * Used to do the movement in the other direction, can be either
+     * used to move backwards or to cancel a previous movement.
+     */
     public void back() {
         long temps = 1; //old_move / 8000000;
         this.setX(this.getX() - (this.getvX() * temps));

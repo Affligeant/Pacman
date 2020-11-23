@@ -2,7 +2,6 @@ package Moteur;
 
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public abstract class Window extends Stage {
@@ -19,8 +18,6 @@ public abstract class Window extends Stage {
         setScene(scene);
         init();
     }
-
-    public void setBackground(Color color) { getScene().setFill(color); }
 
     /**
      * Called when constructing the window. Specify here everything that needs to be instantiated

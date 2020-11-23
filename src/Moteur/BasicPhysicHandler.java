@@ -1,10 +1,13 @@
 package Moteur;
 
-public class BasicPhysicHandler extends CollisionManager {
+/**
+ * This class is used as a constant for a basic physic handler.
+ * It takes into account that the entities boolean "physic" has
+ * been correctly filled.
+ */
+public class BasicPhysicHandler implements CollisionManager {
 
-    public BasicPhysicHandler() {
-        super();
-    }
+    public BasicPhysicHandler() { super(); }
 
     @Override
     public boolean update(CollisionEvent collisionEvent) {

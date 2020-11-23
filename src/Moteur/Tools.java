@@ -8,6 +8,15 @@ import java.util.List;
 
 public abstract class Tools {
 
+    /** That method takes a file containing a matrix of IDs, a factory, and the length
+     * of an entity to automatically generate each entity depending on their ID.
+     *
+     * @param path Path to the file containing the IDs. Must be a numeric Matrix separated with spaces.
+     * @param tailleCase The length of an entity. Both it's height and width.
+     * @param entityFactory The Factory used to build the entities. Must implement EntityFactory.
+     * @return Returns an ArrayList of Entity objects filled with their x, y and size.
+     * @throws IOException If the file of the matrix can't be located, or if the construction of the Entity throws it.
+     */
     public static ArrayList<Entity> mapFromFile(String path, double tailleCase, EntityFactory entityFactory) throws IOException {
 
         List<String> data = Files.readAllLines(Paths.get(path));
@@ -39,10 +48,10 @@ public abstract class Tools {
         return entities;
     }
 
-    /** Méthode permettant d'extraire les ID de la matrice d'une carte donnée en paramètres.
-     * @param path Le chemin d'accès du fichier
-     * @return Un tableau de Integer en 2 dimensions représentant les ID de la matrice associée au fichier.
-     * @throws IOException Si on ne trouve pas le fichier correspondant aux données
+    /** Method used to extract the IDs from the matrix of a given file.
+     * @param path Path to the file.
+     * @return A 2 dimensional {@code Integer} Array, filled with the IDs found in the file.
+     * @throws IOException If the file can't be located.
      */
     public static Integer[][] mapFromFile(String path) throws IOException {
         List<String> data = Files.readAllLines(Paths.get(path));
@@ -67,9 +76,9 @@ public abstract class Tools {
         return matrice;
     }
 
-    /** Méthode permettant de vérifier la validité de la matrice d'ID du fichier.
-     * @param data Matrice contenant les ID des entités
-     * @return True si la matrice est rectangulaire, false si elle a des lignes dont la taille varie.
+    /** Method used to verify the format of a given file.
+     * @param data Matrix of the Entitys IDs
+     * @return {@code True} If the matrix is rectangular. {@code False} if it's lines' length vary.
      */
     private static boolean isBadFormed(List<String> data) {
         int taille = data.get(0).length();
