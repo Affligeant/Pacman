@@ -3,8 +3,11 @@ package Moteur;
 import javafx.animation.AnimationTimer;
 import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Color;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 public class Render extends AnimationTimer {
@@ -17,6 +20,7 @@ public class Render extends AnimationTimer {
     CollisionObserver collisionObserver;
     double width;
     double height;
+    Color backgroundColor;
 
     /**
      * Main class of a graphical game, used to display entities and notify observers.
@@ -27,7 +31,7 @@ public class Render extends AnimationTimer {
      * @param width Width of the display space, to refresh it.
      * @param height Height of the display space, to refresh it.
      */
-    public Render(GraphicsContext gc, Scene scene, double width, double height) {
+    public Render(GraphicsContext gc, Scene scene, double width, double height, Color backgroundColor) {
         this.gc = gc;
         this.keyEventManager = new KeyEventManager(scene);
         characters = new ArrayList<>();
@@ -36,6 +40,7 @@ public class Render extends AnimationTimer {
         collisionObserver = new CollisionObserver();
         this.width = width;
         this.height = height;
+        this.backgroundColor = backgroundColor;
     }
 
     /**
@@ -46,6 +51,7 @@ public class Render extends AnimationTimer {
     @Override
     public void handle(long now) {
         gc.clearRect(0, 0, width, height);
+        gc.setFill(backgroundColor);
         gc.fillRect(0, 0, width, height);
 
         for(Entity e : entities) {

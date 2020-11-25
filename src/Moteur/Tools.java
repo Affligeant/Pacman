@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class Tools {
@@ -62,7 +63,7 @@ public abstract class Tools {
         }
 
         //Largeur = taille d'une ligne. Longueur = taille d'une colonne.
-        Integer[][] matrice = new Integer[data.get(0).length()][data.size()];
+        Integer[][] matrice = new Integer[data.get(0).split(" ").length][data.size()];
 
         String[] lineEntities;
 
@@ -86,5 +87,97 @@ public abstract class Tools {
             if(s.length() != taille) { return true; }
         }
         return false;
+    }
+
+    public static Graph constructGraph(double tailleCase, int posX, int posY, List<Integer> blocking, String filePath) throws IOException {
+
+        Integer[][] matrix = mapFromFile(filePath);
+        assert matrix != null;
+        boolean[][] exploredMatrix = new boolean[matrix.length][matrix[0].length];
+
+        for(boolean[] l : exploredMatrix) {
+            for(Boolean b : l) {
+                b = false;
+            }
+        }
+
+        if(blocking.contains(matrix[posX][posY])) {
+            System.out.println("Erreur : La position de départ donnée est un obstacle");
+            return null;
+        }
+
+        Graph graph = new Graph();
+        Node firstNode = new Node(posX * tailleCase, posY * tailleCase);
+        exploredMatrix[posX][posY] = true;
+
+        graph.addNode(firstNode);
+        ArrayList<Node> nodesLeft = new ArrayList<>();
+        nodesLeft.add(firstNode);
+
+        while(nodesLeft.size() > 0) {
+            Node n = nodesLeft.get(0);
+            nodesLeft.remove(n);
+            ArrayList<Node> nodeList = detectNextNodes(tailleCase, n, matrix, exploredMatrix, blocking);
+            for(Node node : nodeList) {
+                if(graph.addNode(node)) {
+                    nodesLeft.add(node);
+                }
+                else {
+                    node = graph.getNodeByPos(node.x, node.y);
+                }
+                graph.addArc(n, node);
+                graph.addArc(node, n);
+            }
+        }
+
+        return graph;
+    }
+
+    private static Node nextNodeDirection(double tailleCase, int posX, int posY, Integer[][] matrix, boolean[][] exploredMatrix, List<Integer> blocking, int xVect, int yVect) {
+        int distance = 1;
+        int nxtX = posX + xVect;
+        int nxtY = posY + yVect;
+
+        if(nxtX < 0 || nxtY < 0 || nxtX >= matrix.length || nxtY >= matrix[0].length || exploredMatrix[nxtX][nxtY]) {
+            return null;
+        }
+
+        while(nxtX >= 0 && nxtY >= 0 && nxtX < matrix.length && nxtY < matrix[0].length && !blocking.contains(matrix[nxtX][nxtY])) {
+            exploredMatrix[nxtX][nxtY] = true;
+            distance += 1;
+            if(xVect != 0 && (nxtY + 1 < matrix[0].length && !blocking.contains(matrix[nxtX][nxtY + 1])) || xVect != 0 && (nxtY - 1 >= 0 && !blocking.contains(matrix[nxtX][nxtY - 1]))) {
+                break;
+            }
+            if(yVect != 0 && (nxtX + 1 < matrix.length && !blocking.contains(matrix[nxtX + 1][nxtY])) || yVect != 0 && (nxtX - 1 >= 0 && !blocking.contains(matrix[nxtX - 1][nxtY]))) {
+                break;
+            }
+
+            nxtX += xVect;
+            nxtY += yVect;
+        }
+
+        if(distance > 1) {
+            return new Node(tailleCase * (posX + (distance - 1) * xVect), tailleCase * (posY + (distance - 1) * yVect));
+        }
+
+        return null;
+    }
+
+    private static ArrayList<Node> detectNextNodes(double tailleCase, Node actualNode, Integer[][] matrix, boolean[][] exploredMatrix, List<Integer> blocking) {
+
+        ArrayList<Node> nextNodes = new ArrayList<>();
+        int posX = (int) (actualNode.x / tailleCase);
+        int posY = (int) (actualNode.y / tailleCase);
+
+        Node north = nextNodeDirection(tailleCase, posX, posY, matrix, exploredMatrix, blocking, 0, -1);
+        if(north != null) { nextNodes.add(north); }
+        Node south = nextNodeDirection(tailleCase, posX, posY, matrix, exploredMatrix, blocking, 0, 1);
+        if(south != null) { nextNodes.add(south); }
+        Node east = nextNodeDirection(tailleCase, posX, posY, matrix, exploredMatrix, blocking, 1, 0);
+        if(east != null) { nextNodes.add(east); }
+        Node west = nextNodeDirection(tailleCase, posX, posY, matrix, exploredMatrix, blocking, -1, 0);
+        if(west != null) { nextNodes.add(west); }
+
+        return nextNodes;
     }
 }
