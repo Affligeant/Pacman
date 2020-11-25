@@ -28,6 +28,12 @@ public class AnticipateFantomBehavior extends FantomMovableBehavior {
                 else {
                     double xTest = pacman.getX();
                     double yTest = pacman.getY();
+                    if(pacman.getvY() == 0 && pacman.getvX() == 0) {
+                        double distF = Graph.calcDist(pacmanNode[0], new Node(pacman.getX(), pacman.getY()));
+                        double distS = Graph.calcDist(pacmanNode[1], new Node(pacman.getX(), pacman.getY()));
+                        if(distF < distS) { n2 = pacmanNode[0]; }
+                        else { n2 = pacmanNode[1]; }
+                    }
                     while(n2 == null) {
                         n2 = g.getNodeByPos(xTest, yTest);
                         xTest += pacman.getvX();
