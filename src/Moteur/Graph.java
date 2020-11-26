@@ -6,9 +6,7 @@ import java.util.Collection;
 public class Graph {
     ArrayList<Node> nodes;
 
-    public Graph() {
-        this.nodes = new ArrayList<>();
-    }
+    public Graph() { this.nodes = new ArrayList<>(); }
 
     public boolean addNode(Node node) {
         for(Node n : nodes) {
@@ -27,7 +25,6 @@ public class Graph {
 
     public void unexplore() {
         for(Node n : nodes) {
-            n.explored = false;
             n.previouslyExplored = null;
             n.totalCost = 9999;
         }
@@ -69,7 +66,6 @@ public class Graph {
         ArrayList<Node> nodeCopy = new ArrayList<>(nodes);
 
         n1.totalCost = 0;
-        n1.explored = true;
 
         while(nodeCopy.size() > 0) {
             Node chosen = leastDistNode(nodeCopy);
@@ -108,7 +104,18 @@ public class Graph {
         return min;
     }
 
-    public Node[] getClosestNodesFromPos(double x, double y) {
+    public Node getClosestNodeFromPos(double x, double y) {
+
+        Node[] framing = getFramingNodesFromPos(x, y);
+
+        double distF = Graph.calcDist(framing[0], new Node(x, y));
+        double distS = Graph.calcDist(framing[1], new Node(x, y));
+
+        if(distF < distS) { return framing[0]; }
+        else { return framing[1]; }
+    }
+
+    public Node[] getFramingNodesFromPos(double x, double y) {
 
         Node res = getNodeByPos(x, y);
 
@@ -132,6 +139,22 @@ public class Graph {
                         first = n;
                         second = n2;
                     }
+                }
+            }
+        }
+
+
+        if(first == null) {
+            Node a = new Node(x, y);
+            double distanceMin = Integer.MAX_VALUE;
+            //la position se trouve entre un bord de l'écran et le node de bord d'écran
+            //On récupère donc le node le plus proche !
+            for(Node n : nodes) {
+                double distNodes = calcDist(a, n);
+                if(distNodes < distanceMin) {
+                    distanceMin = distNodes;
+                    first = n;
+                    second = n;
                 }
             }
         }

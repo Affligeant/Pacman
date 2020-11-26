@@ -6,7 +6,6 @@ public class Node {
     double x;
     double y;
 
-    boolean explored;
     double totalCost;
     Node previouslyExplored;
 
@@ -16,12 +15,9 @@ public class Node {
         this.x = x;
         this.y = y;
         this.arcs = new ArrayList<>();
-        this.explored = false;
     }
 
     public double getX() { return x; }
     public double getY() { return y; }
     public ArrayList<Arc> getArcs() { return arcs; }
-    public void explore() { explored = true; }
-    public boolean isExplored() { return explored; }
 }

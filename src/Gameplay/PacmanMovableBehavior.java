@@ -17,28 +17,31 @@ public class PacmanMovableBehavior implements MovableBehavior, KeyObserver {
 
     @Override
     public void update(Movable entity) {
-        ((Character) entity).setOld_vX(((Character) entity).getvX());
-        ((Character) entity).setOld_vY(((Character) entity).getvY());
+        Character c = (Character) entity;
+
+        c.setOld_vX(c.getvX());
+        c.setOld_vY(c.getvY());
+
         switch (input) {
             case "S":
             case "DOWN":
-                ((Character) entity).setvY(1);
-                ((Character) entity).setvX(0);
+                c.setvY(1);
+                c.setvX(0);
                 break;
             case "Q":
             case "LEFT":
-                ((Character) entity).setvY(0);
-                ((Character) entity).setvX(-1);
+                c.setvY(0);
+                c.setvX(-1);
                 break;
             case "Z":
             case "UP":
-                ((Character) entity).setvY(-1);
-                ((Character) entity).setvX(0);
+                c.setvY(-1);
+                c.setvX(0);
                 break;
             case "D":
             case "RIGHT":
-                ((Character) entity).setvY(0);
-                ((Character) entity).setvX(1);
+                c.setvY(0);
+                c.setvX(1);
                 break;
             default:
                 break;

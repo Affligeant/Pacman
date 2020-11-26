@@ -21,6 +21,11 @@ public class Render extends AnimationTimer {
     double width;
     double height;
     Color backgroundColor;
+    EdgeType edgeType;
+
+    public enum EdgeType {
+        NONE, BLOCK, WARP;
+    }
 
     /**
      * Main class of a graphical game, used to display entities and notify observers.
@@ -30,8 +35,9 @@ public class Render extends AnimationTimer {
      * @param scene The scene associated with the graphicsContext, used to link the KeyEventManager.
      * @param width Width of the display space, to refresh it.
      * @param height Height of the display space, to refresh it.
+     * @param edgeType Type of collision triggered with the edge of the graphical area.
      */
-    public Render(GraphicsContext gc, Scene scene, double width, double height, Color backgroundColor) {
+    public Render(GraphicsContext gc, Scene scene, double width, double height, Color backgroundColor, EdgeType edgeType) {
         this.gc = gc;
         this.keyEventManager = new KeyEventManager(scene);
         characters = new ArrayList<>();
@@ -41,6 +47,7 @@ public class Render extends AnimationTimer {
         this.width = width;
         this.height = height;
         this.backgroundColor = backgroundColor;
+        this.edgeType = edgeType;
     }
 
     /**
@@ -63,6 +70,61 @@ public class Render extends AnimationTimer {
         for(Character c : characters) {
             c.update();
             c.move(now-lastTimeICheckedMyWatch);
+
+            if(c.getX() > width) {
+                switch (edgeType) {
+                    case BLOCK:
+                        c.setX(width);
+                        break;
+                    case WARP:
+                        c.setX(0);
+                        break;
+                    case NONE:
+                    default:
+                        break;
+                }
+            }
+            else if(c.getX() < 0) {
+                switch (edgeType) {
+                    case BLOCK:
+                        c.setX(0);
+                        break;
+                    case WARP:
+                        c.setX(width);
+                        break;
+                    case NONE:
+                    default:
+                        break;
+                }
+            }
+
+            if(c.getY() > height) {
+                switch (edgeType) {
+                    case BLOCK:
+                        c.setY(height);
+                        break;
+                    case WARP:
+                        c.setY(0);
+                        break;
+                    case NONE:
+                    default:
+                        break;
+                }
+            }
+            else if(c.getY() < 0) {
+                switch (edgeType) {
+                    case BLOCK:
+                        c.setY(0);
+                        break;
+                    case WARP:
+                        c.setY(height);
+                        break;
+                    case NONE:
+                    default:
+                        break;
+                }
+            }
+
         }
 
         lastTimeICheckedMyWatch = now;

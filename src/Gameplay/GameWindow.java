@@ -21,13 +21,13 @@ public class GameWindow extends Window {
         this.canvas = new Canvas(width, height);
         borderPane.setCenter(canvas);
 
-        Render render = new Render(getGraphicsContext(), getScene(), width, height, Color.BLACK);
+        Render render = new Render(getGraphicsContext(), getScene(), width, height, Color.BLACK, Render.EdgeType.WARP);
         initCharacters(render);
 
         ArrayList<Entity> entityArrayList;
 
         try {
-            entityArrayList = Tools.mapFromFile("./src/Gameplay/niveau1.map", 30, new PacmanEntityFactory());
+            entityArrayList = Tools.mapFromFile("./src/Gameplay/niveau3.map", 30, new PacmanEntityFactory());
         } catch (IOException e) {
             System.out.println(e.getMessage());
             return;
@@ -42,7 +42,7 @@ public class GameWindow extends Window {
 
         Graph g = null;
         try {
-            g = Tools.constructGraph(30, 1, 1, Arrays.asList(1, 4),"src/Gameplay/niveau1.map");
+            g = Tools.constructGraph(30, 6, 1, Arrays.asList(1, 4),"src/Gameplay/niveau3.map");
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -3,8 +3,6 @@ package Gameplay;
 import Moteur.*;
 import Moteur.Character;
 
-import java.util.ArrayList;
-
 public class FollowFantomBehavior extends FantomMovableBehavior {
 
     Character pacman;
@@ -22,18 +20,25 @@ public class FollowFantomBehavior extends FantomMovableBehavior {
         else {
             if(hasReachedNextDestination) {
 
-                Node[] pacmanNode = g.getClosestNodesFromPos(pacman.getX(), pacman.getY());
+                Node[] pacmanNode = g.getFramingNodesFromPos(pacman.getX(), pacman.getY());
+                double x = ((Character) entity).getX();
+                double y = ((Character) entity).getY();
 
-                double distF = Graph.calcDist(pacmanNode[0], new Node(pacman.getX(), pacman.getY()));
-                double distS = Graph.calcDist(pacmanNode[1], new Node(pacman.getX(), pacman.getY()));
                 Node n2;
-                Node fantomNode = g.getNodeByPos(((Character) entity).getX(), ((Character) entity).getY());
-                if(fantomNode == pacmanNode[0]) { n2 = pacmanNode[1]; }
-                else if(fantomNode == pacmanNode[1]) { n2 = pacmanNode[0]; }
-                else if(distF < distS) { n2 = g.getNextNodeToReach(fantomNode, pacmanNode[0]); }
-                else { n2 = g.getNextNodeToReach(fantomNode, pacmanNode[1]); }
+                Node fantomNode = g.getNodeByPos(x, y);
+                if(fantomNode != null) {
 
-                nextDestination = new double[]{n2.getX(), n2.getY()};
+                    if(fantomNode == pacmanNode[0]) { n2 = pacmanNode[1]; }
+                    else if(fantomNode == pacmanNode[1]) { n2 = pacmanNode[0]; }
+                    else { n2 = g.getNextNodeToReach(fantomNode, g.getClosestNodeFromPos(pacman.getX(), pacman.getY())); }
+
+                    nextDestination = new double[]{n2.getX(), n2.getY()};
+                }
+                else {
+                    Node nClose = g.getClosestNodeFromPos(x, y);
+                    nextDestination = new double[]{nClose.getX(), nClose.getY()};
+                }
+
                 hasReachedNextDestination = false;
             }
             else {

@@ -20,9 +20,20 @@ public class RandomFantomMovableBehavior extends FantomMovableBehavior {
         }
         else {
             if(hasReachedNextDestination) {
-                ArrayList<Arc> arcs = g.getNodeByPos(((Entity) entity).getX(), ((Entity) entity).getY()).getArcs();
-                Node n2 = arcs.get(new Random().nextInt(arcs.size())).getN2();
-                nextDestination = new double[]{n2.getX(), n2.getY()};
+                double x = ((Entity) entity).getX();
+                double y = ((Entity) entity).getY();
+
+                Node fantomNode = g.getNodeByPos(x, y);
+                if(fantomNode != null) {
+                    ArrayList<Arc> arcs = fantomNode.getArcs();
+                    Node n2 = arcs.get(new Random().nextInt(arcs.size())).getN2();
+                    nextDestination = new double[]{n2.getX(), n2.getY()};
+                }
+                else {
+                    Node nClose = g.getClosestNodeFromPos(x, y);
+                    nextDestination = new double[]{nClose.getX(), nClose.getY()};
+                }
+
                 hasReachedNextDestination = false;
             }
             else {
