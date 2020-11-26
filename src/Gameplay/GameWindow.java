@@ -64,7 +64,7 @@ public class GameWindow extends Window {
 
         RandomFantomMovableBehavior inkyBehavior = new RandomFantomMovableBehavior(g);
         SemirandomFantomMovableBehavior clydeBehavior = new SemirandomFantomMovableBehavior(g, pacman);
-        AnticipateFantomBehavior pinkyBehavior = new AnticipateFantomBehavior(g, pacman);
+        AnticipateFantomBehavior pinkyBehavior = new AnticipateFantomBehavior(g, pacman, width, height);
         FollowFantomBehavior blinkyBehavior = new FollowFantomBehavior(g, pacman);
 
         try {
