@@ -3,33 +3,58 @@ package Moteur;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Graph represented by {@code Nodes} fixed in a plan.
+ * Meant to be visual more than abstract since it
+ * stores real positions of {@code Nodes}.
+ */
 public class Graph {
     ArrayList<Node> nodes;
 
     public Graph() { this.nodes = new ArrayList<>(); }
 
+    /**
+     * @param node The node to add
+     * @return false if the position given is already taken by another node.
+     */
     public boolean addNode(Node node) {
-        for(Node n : nodes) {
-            if(n.x == node.x && n.y == node.y) {
-                return false;
-            }
-        }
+        if(getNodeByPos(node.x, node.y) != null) { return false; }
         this.nodes.add(node);
         return true;
     }
 
+    /**
+     * Adds an arc from the node n1 to the node n2.
+     * Calculates the weight automatically from the
+     * nodes position.
+     *
+     * @param n1 First node
+     * @param n2 Second node
+     */
     public void addArc(Node n1, Node n2) {
         double poids = calcDist(n1, n2);
         nodes.get(nodes.indexOf(n1)).arcs.add(new Arc(n2, poids));
     }
 
-    public void unexplore() {
+    /**
+     * Prepares nodes for a shortest path algorithm.
+     * Sets their previously best explored node to {@code null}
+     * and their total cost to {@code Integer.MAX_VALUE}.
+     */
+    private void unexplore() {
         for(Node n : nodes) {
             n.previouslyExplored = null;
-            n.totalCost = 9999;
+            n.totalCost = Integer.MAX_VALUE;
         }
     }
 
+    /**
+     * Returns the node at the position (x,y) if it exists in this Graph.
+     *
+     * @param x Position x
+     * @param y Position y
+     * @return Node at position (x,y) if there is one.
+     */
     public Node getNodeByPos(double x, double y) {
         for(Node n : nodes) {
             if(n.x == x && n.y == y) {
@@ -40,6 +65,14 @@ public class Graph {
         return null;
     }
 
+    /**
+     * Calculates the absolute distance between 2 nodes
+     * based upon their position
+     *
+     * @param n1 First node
+     * @param n2 Second node
+     * @return Absolute distance between the 2 nodes
+     */
     public static double calcDist(Node n1, Node n2) {
         double xDist = (n1.x - n2.x) * (n1.x - n2.x);
         double yDist = (n1.y - n2.y) * (n1.y - n2.y);
@@ -48,6 +81,14 @@ public class Graph {
 
     public ArrayList<Node> getNodes() { return nodes; }
 
+    /**
+     * Used to check if the specified node n1 has a link
+     * to the node n2 in this Graph.
+     *
+     * @param n1 First node
+     * @param n2 Second node
+     * @return True if n1 has an arc towards n2
+     */
     public boolean hasALinkWith(Node n1, Node n2) {
         for(Arc a : n1.getArcs()) {
             if(a.getN2() == n2) { return true; }
@@ -56,6 +97,13 @@ public class Graph {
         return false;
     }
 
+    /**
+     * This methode returns the next node from n1 in a shortest path from n1 to n2.
+     *
+     * @param n1 The starting node
+     * @param n2 The ending node
+     * @return The next node to reach in order to go from n1 to n2 with the lowest cost.
+     */
     public Node getNextNodeToReach(Node n1, Node n2) {
 
         if(hasALinkWith(n1, n2)) {
@@ -68,6 +116,7 @@ public class Graph {
         n1.totalCost = 0;
 
         while(nodeCopy.size() > 0) {
+
             Node chosen = leastDistNode(nodeCopy);
 
             nodeCopy.remove(chosen);
@@ -94,7 +143,13 @@ public class Graph {
         return null;
     }
 
-    public Node leastDistNode(Collection<Node> nodes) {
+    /**
+     * Used in graphs search algorithms.
+     *
+     * @param nodes A collection of nodes
+     * @return The node with the lowest totalCost value.
+     */
+    private static Node leastDistNode(Collection<Node> nodes) {
         Node min = new Node(0, 0);
         min.totalCost = Integer.MAX_VALUE;
         for(Node n : nodes) {
@@ -104,6 +159,13 @@ public class Graph {
         return min;
     }
 
+    /**
+     * Used to get the closest node which has an arc passing by the position given.
+     *
+     * @param x The x position of the point
+     * @param y The y position of the point
+     * @return Closest node.
+     */
     public Node getClosestNodeFromPos(double x, double y) {
 
         Node[] framing = getFramingNodesFromPos(x, y);
@@ -115,6 +177,16 @@ public class Graph {
         else { return framing[1]; }
     }
 
+    /**
+     * Used to get the 2 closest nodes that have an arc passing by the position given.
+     * If there is none, returns the closest node.
+     *
+     * @param x The x position of the point
+     * @param y The y position of the point
+     * @return An array of 2 nodes filled with the nodes framing the point given.
+     * If the given point is a node itself or if we're past the last node at the edge,
+     * the 2 nodes are the same.
+     */
     public Node[] getFramingNodesFromPos(double x, double y) {
 
         Node res = getNodeByPos(x, y);

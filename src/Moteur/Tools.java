@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class Tools {
@@ -89,17 +88,20 @@ public abstract class Tools {
         return false;
     }
 
+    /**
+     * @param tailleCase Length of each matrix entity.
+     * @param posX The x index of the first node.
+     * @param posY The y index of the first node.
+     * @param blocking The list of IDs corresponding to blocking entities.
+     * @param filePath The path of the file containing the matrix.
+     * @return A Graph created from the matrix given representing paths.
+     * @throws IOException If the file containing the matrix couldn't be found.
+     */
     public static Graph constructGraph(double tailleCase, int posX, int posY, List<Integer> blocking, String filePath) throws IOException {
 
         Integer[][] matrix = mapFromFile(filePath);
         assert matrix != null;
         boolean[][] exploredMatrix = new boolean[matrix.length][matrix[0].length];
-
-        for(boolean[] l : exploredMatrix) {
-            for(Boolean b : l) {
-                b = false;
-            }
-        }
 
         if(blocking.contains(matrix[posX][posY])) {
             System.out.println("Erreur : La position de départ donnée est un obstacle");
@@ -133,6 +135,19 @@ public abstract class Tools {
         return graph;
     }
 
+    /**
+     * Searches for the next node in a direction given by the vectors xVect and yVect.
+     *
+     * @param tailleCase Length of each matrix entity.
+     * @param posX The starting x index.
+     * @param posY The starting y index.
+     * @param matrix The matrix with the entities IDs
+     * @param exploredMatrix The matrix of the already explored path.
+     * @param blocking The list of IDs corresponding to blocking entities.
+     * @param xVect The horizontal vector.
+     * @param yVect The vertical vector.
+     * @return The next node found in the direction given by the vectors.
+     */
     private static Node nextNodeDirection(double tailleCase, int posX, int posY, Integer[][] matrix, boolean[][] exploredMatrix, List<Integer> blocking, int xVect, int yVect) {
         int distance = 1;
         int nxtX = posX + xVect;
@@ -163,6 +178,16 @@ public abstract class Tools {
         return null;
     }
 
+    /**
+     * Searches for the next nodes in every direction from the given actual node.
+     *
+     * @param tailleCase Length of each matrix entity
+     * @param actualNode Node from which the detection takes place
+     * @param matrix The matrix of the entity IDs
+     * @param exploredMatrix The matrix of the already explored path.
+     * @param blocking The list of IDs corresponding to blocking entities.
+     * @return A list of the next new nodes discovered.
+     */
     private static ArrayList<Node> detectNextNodes(double tailleCase, Node actualNode, Integer[][] matrix, boolean[][] exploredMatrix, List<Integer> blocking) {
 
         ArrayList<Node> nextNodes = new ArrayList<>();

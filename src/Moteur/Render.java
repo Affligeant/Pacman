@@ -5,9 +5,7 @@ import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 
 public class Render extends AnimationTimer {
@@ -24,7 +22,7 @@ public class Render extends AnimationTimer {
     EdgeType edgeType;
 
     public enum EdgeType {
-        NONE, BLOCK, WARP;
+        NONE, BLOCK, WARP
     }
 
     /**
@@ -35,7 +33,7 @@ public class Render extends AnimationTimer {
      * @param scene The scene associated with the graphicsContext, used to link the KeyEventManager.
      * @param width Width of the display space, to refresh it.
      * @param height Height of the display space, to refresh it.
-     * @param edgeType Type of collision triggered with the edge of the graphical area.
+     * @param edgeType Type of collision entity triggers with the edge of the graphical area.
      */
     public Render(GraphicsContext gc, Scene scene, double width, double height, Color backgroundColor, EdgeType edgeType) {
         this.gc = gc;
