@@ -2,88 +2,118 @@ package Gameplay;
 
 import Moteur.*;
 import Moteur.Character;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
+import Moteur.Render.EdgeType;
 import javafx.scene.paint.Color;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class GameWindow extends Window {
 
-    private Canvas canvas;
+    public final int TAILLE_CASE = 30;
 
-    public GameWindow(double height, double width) { super(height, width); }
+    public GameWindow(double height, double width) { super(height, width + 200); }
 
     public void init() {
-        this.canvas = new Canvas(width, height);
-        borderPane.setCenter(canvas);
 
-        Render render = new Render(getGraphicsContext(), getScene(), width, height, Color.BLACK, Render.EdgeType.WARP);
-        initCharacters(render);
+        Canevas canevas = new Canevas(width-200, height);
+        canevas.setBackground(Color.BLACK);
+        setCenter(canevas);
 
-        ArrayList<Entity> entityArrayList;
 
+        Text score = new Text("0");
+        Text niveau = new Text("1");
+        score.setSize(24);
+        score.setFill(Color.ORANGERED);
+        niveau.setSize(24);
+        niveau.setFill(Color.ORANGERED);
+        setRight(initInformationPanel(score, niveau));
+
+        Render render = new Render(canevas.getGraphicContext(), this, width-200, height, EdgeType.WARP);
+
+        Pacman pacman;
+        Niveau niveau1;
+        Niveau niveau2;
+        Niveau niveau3;
         try {
-            entityArrayList = Tools.mapFromFile("./src/Gameplay/niveau3.map", 30, new PacmanEntityFactory());
+            pacman = new Pacman(14 * 30, 23 * 30, TAILLE_CASE, score);
+            niveau1 = new Niveau("src/Gameplay/niveau1.map", 1, Niveau.FruitType.POMME, 1, 1, TAILLE_CASE, width-200, height, pacman);
+            niveau2 = new Niveau("src/Gameplay/niveau2.map", 1.2, Niveau.FruitType.PECHE, 6, 1, TAILLE_CASE, width-200, height, pacman);
+            niveau3 = new Niveau("src/Gameplay/niveau3.map", 1.5, Niveau.FruitType.CERISES, 6, 1, TAILLE_CASE, width-200, height, pacman);
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
             return;
         }
 
-        if(entityArrayList != null) { render.addEntity(entityArrayList); }
+        render.getKeyEventManager().add((KeyObserver) pacman.getMovableBehavior(), Arrays.asList("UP", "DOWN", "LEFT", "RIGHT", "Z", "Q", "S", "D"));
+        PacmanCollisionManager pacmanCollisionManager = new PacmanCollisionManager(pacman);
+        render.addObserver(pacmanCollisionManager);
+        ArrayList<Niveau> niveaux = new ArrayList<>(Arrays.asList(niveau1, niveau2, niveau3));
+
+        render.addEntity(niveaux.get(0).getElements());
+        for(Character c : niveaux.get(0).getCharacters()) {
+            render.addEntity(c);
+        }
+        render.addEntity(pacman);
+        pacmanCollisionManager.setScoreMultiplier(niveaux.get(0).scoreMultiplier);
 
         render.start();
     }
 
-    private void initCharacters(Render render) {
+    private Area initInformationPanel(Text score, Text niveau) {
 
-        Graph g = null;
-        try {
-            g = Tools.constructGraph(30, 6, 1, Arrays.asList(1, 4),"src/Gameplay/niveau3.map");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //Cadre
+        Area informationPanelBox = new Area(200, height);
+        informationPanelBox.setColor("purple");
 
-        Character pacman = null;
-        Character inky = null;
-        Character clyde = null;
-        Character blinky = null;
-        Character pinky = null;
-        PacmanMovableBehavior pacmanMovableBehavior = new PacmanMovableBehavior();
+        //Zone centrale
+        Area informationPanel = new Area(200, height);
+        informationPanel.setMargins(12);
+        informationPanel.setColor("black");
+        informationPanelBox.setCenter((WindowElement) informationPanel);
 
-        render.getKeyEventManager().add(pacmanMovableBehavior, Arrays.asList("UP", "DOWN", "LEFT", "RIGHT", "Z", "Q", "S", "D"));
+        //Zone vide en haut
+        Area zoneVide = new Area(200, height / 4);
+        zoneVide.setColor("black");
+        informationPanel.setTop((WindowElement) zoneVide);
 
-        try {
-            pacman = new Character(14*30, 23*30, "./src/Images/cercle_jaune.png", 30, 30, pacmanMovableBehavior);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        //Zone vide en bas
+        Area zoneVide2 = new Area(200, height/4);
+        zoneVide2.setColor("black");
+        informationPanel.setBottom((WindowElement) zoneVide2);
 
-        RandomFantomMovableBehavior inkyBehavior = new RandomFantomMovableBehavior(g);
-        SemirandomFantomMovableBehavior clydeBehavior = new SemirandomFantomMovableBehavior(g, pacman);
-        AnticipateFantomBehavior pinkyBehavior = new AnticipateFantomBehavior(g, pacman, width, height);
-        FollowFantomBehavior blinkyBehavior = new FollowFantomBehavior(g, pacman);
+        //Zone centrale avec les 2 zones d'informations
+        Area informationArea = new Area(200, height/2);
+        informationArea.setColor("black");
+        informationArea.setMargins(15);
+        informationPanel.setCenter((WindowElement) informationArea);
 
-        try {
-            inky = new Character(11*30, 14*30, "src/Images/inky.png", 30, 30, inkyBehavior);
-            clyde = new Character(11*30, 14*30, "src/Images/clyde.png", 30, 30, clydeBehavior);
-            pinky = new Character(11*30, 14*30, "src/Images/pinky.png", 30, 30, pinkyBehavior);
-            blinky = new Character(11*30, 14*30, "src/Images/blinky.png", 30, 30, blinkyBehavior);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
+        //Première zone d'infos : le niveau
+        Area levelInfos = new Area(200, height/5);
+        levelInfos.setColor("black");
+        Text niveauLabel = new Text("Niveau :");
+        niveauLabel.setSize(28);
+        niveauLabel.setFill(Color.ORANGE);
+        levelInfos.setTop((WindowElement) niveauLabel);
+        levelInfos.setCenter((WindowElement) niveau);
+        informationArea.setTop((WindowElement) levelInfos);
 
-        render.addEntity(inky);
-        render.addEntity(clyde);
-        render.addEntity(pinky);
-        render.addEntity(blinky);
-        render.addEntity(pacman);
-        render.addObserver(new PacmanCollisionManager(pacman));
+        //Zone de vide entre les infos
+        Area zoneVide3 = new Area(200, height/10);
+        zoneVide3.setColor("black");
+        informationArea.setCenter((WindowElement) zoneVide3);
 
+        //2eme zone d'infos : le score
+        Area scoreInfos = new Area(200, height/5);
+        scoreInfos.setColor("black");
+        Text scoreLabel = new Text("Score :");
+        scoreLabel.setFill(Color.ORANGE);
+        scoreLabel.setSize(28);
+        scoreInfos.setTop((WindowElement) scoreLabel);
+        scoreInfos.setCenter((WindowElement) score);
+        informationArea.setBottom((WindowElement) scoreInfos);
+
+        return informationPanelBox;
     }
-
-    public GraphicsContext getGraphicsContext() { return canvas.getGraphicsContext2D(); }
 }

@@ -17,7 +17,7 @@ public abstract class FantomMovableBehavior implements MovableBehavior {
     FantomMovableBehavior(int runsToWait, Graph g) {
         startingPattern = new ArrayList<>();
         started = false;
-        double[] nextDestination = null;
+        nextDestination = null;
         hasReachedNextDestination = false;
         this.g = g;
         init(runsToWait);

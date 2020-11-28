@@ -1,8 +1,5 @@
 package Moteur;
 
-import javafx.scene.image.Image;
-
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Entity {
@@ -33,7 +30,7 @@ public class Entity {
         this.imagePath = imagePath;
         this.height = height;
         this.width = width;
-        this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
+        this.skin = new Image(imagePath, width, height);
         this.physical = physical;
     }
 
@@ -51,7 +48,7 @@ public class Entity {
      */
     public void setPath(String path) throws FileNotFoundException {
         this.imagePath = path;
-        this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
+        this.skin = new Image(imagePath, width, height);
     }
 
     /**
@@ -62,7 +59,7 @@ public class Entity {
     public void resize(double width, double height) throws FileNotFoundException {
         this.width = width;
         this.height = height;
-        this.skin = new Image(new FileInputStream(imagePath), width, height, false, false);
+        this.skin = new Image(imagePath, width, height);
     }
     public double getHeight() { return height; }
     public double getWidth() { return width; }

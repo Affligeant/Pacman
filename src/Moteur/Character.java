@@ -7,7 +7,7 @@ import java.io.FileNotFoundException;
  * Is thus seen as the basic movable entity.
  */
 public class Character extends Entity implements Movable{
-    MovableBehavior movableBehavior;
+    private final MovableBehavior movableBehavior;
     private double vX;
     private double vY;
     private double old_vX;
@@ -66,4 +66,6 @@ public class Character extends Entity implements Movable{
         this.setX(this.getX() - (this.getvX() * temps));
         this.setY(this.getY() - (this.getvY() * temps));
     }
+
+    public MovableBehavior getMovableBehavior() { return movableBehavior; }
 }

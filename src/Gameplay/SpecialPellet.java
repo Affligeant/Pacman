@@ -1,9 +1,8 @@
 package Gameplay;
 
 import Moteur.Entity;
-import javafx.scene.image.Image;
+import Moteur.Image;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class SpecialPellet extends Entity {
@@ -13,7 +12,7 @@ public class SpecialPellet extends Entity {
 
     public SpecialPellet(double x, double y, double height, double width) throws FileNotFoundException {
         super(x, y, "./src/Images/boule_speciale.png", height, width, false);
-        eatenImage = new Image(new FileInputStream("./src/Images/chemin.png"), width, height, false, false);
+        eatenImage = new Image("./src/Images/chemin.png", width, height);
         ate = false;
     }
 

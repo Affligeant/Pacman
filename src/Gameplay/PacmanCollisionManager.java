@@ -7,16 +7,18 @@ import Moteur.Entity;
 
 public class PacmanCollisionManager implements CollisionManager {
 
-    Character pacman;
+    Pacman pacman;
+    double scoreMultiplier;
 
-    PacmanCollisionManager(Character pacman) {
+    PacmanCollisionManager(Pacman pacman) {
         super();
         this.pacman = pacman;
+        this.scoreMultiplier = 1;
     }
 
     @Override
     public boolean update(CollisionEvent collisionEvent) {
-        //Récupère Pacman si il est présent dans la collision
+        //Vérifie si la collision inclut pacman
         if(pacman != collisionEvent.getEntity1() && pacman != collisionEvent.getEntity2()) { return false; }
         Entity e2 = collisionEvent.getEntity1() == pacman?collisionEvent.getEntity2():collisionEvent.getEntity1();
 
@@ -29,10 +31,27 @@ public class PacmanCollisionManager implements CollisionManager {
         else if(e2 instanceof SpecialPellet) {
             return pacmanCollidesSpecial(pacman, (SpecialPellet) e2);
         }
+        else if(e2 instanceof Fruit) {
+            return pacmanCollidesFruit(pacman, (Fruit) e2);
+        }
         return false;
     }
 
-    private boolean pacmanCollidesPellet(Character pacman, Pellet pellet) {
+    private boolean pacmanCollidesFruit(Pacman pacman, Fruit fruit) {
+        if(fruit.isAte()) { return false; }
+
+        double xIn = xIn(pacman, fruit);
+        double yIn = yIn(pacman, fruit);
+
+        if(xIn > fruit.getWidth() / 5 && yIn > fruit.getHeight() / 5) {
+            fruit.eat();
+            pacman.addScore(fruit.getValue());
+        }
+
+        return false;
+    }
+
+    private boolean pacmanCollidesPellet(Pacman pacman, Pellet pellet) {
         if(pellet.isAte()) { return false; }
 
         double xIn = xIn(pacman, pellet);
@@ -40,18 +59,20 @@ public class PacmanCollisionManager implements CollisionManager {
 
         if(xIn > pellet.getWidth() / 2 && yIn > pellet.getHeight() / 2) {
             pellet.eat();
+            pacman.addScore(10 * scoreMultiplier);
         }
         return false;
     }
 
-    private boolean pacmanCollidesSpecial(Character pacman, SpecialPellet special) {
+    private boolean pacmanCollidesSpecial(Pacman pacman, SpecialPellet special) {
         if(special.isAte()) { return false; }
 
         double xIn = xIn(pacman, special);
         double yIn = yIn(pacman, special);
 
-        if(xIn > special.getWidth() / 2 && yIn > special.getHeight() / 2) {
+        if(xIn > special.getWidth() / 3 && yIn > special.getHeight() / 3) {
             special.eat();
+            pacman.addScore(50 * scoreMultiplier);
         }
         return false;
     }
@@ -141,4 +162,6 @@ public class PacmanCollisionManager implements CollisionManager {
 
         return false;
     }
+
+    public void setScoreMultiplier(double scoreMultiplier) { this.scoreMultiplier = scoreMultiplier; }
 }

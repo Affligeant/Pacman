@@ -7,7 +7,11 @@ import javafx.scene.paint.Color;
 /**
  * Encapsulates the JavaFX Canvas
  */
-public class Canevas extends Canvas {
+public class Canevas extends Canvas implements WindowElement{
+
+    public Canevas(double width, double height) {
+        super(width, height);
+    }
 
     public GraphicsContext getGraphicContext() { return this.getGraphicsContext2D(); }
 

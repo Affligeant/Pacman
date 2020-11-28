@@ -1,9 +1,7 @@
 package Moteur;
 
 import javafx.animation.AnimationTimer;
-import javafx.scene.Scene;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,7 +16,6 @@ public class Render extends AnimationTimer {
     CollisionObserver collisionObserver;
     double width;
     double height;
-    Color backgroundColor;
     EdgeType edgeType;
 
     public enum EdgeType {
@@ -30,21 +27,20 @@ public class Render extends AnimationTimer {
      * This constructor needs the graphical context and it's size as well as the scene associated.
      *
      * @param gc The graphicsContext in which the Render is display entities.
-     * @param scene The scene associated with the graphicsContext, used to link the KeyEventManager.
+     * @param window The window this render is associated with, to catch the keyboard events.
      * @param width Width of the display space, to refresh it.
      * @param height Height of the display space, to refresh it.
      * @param edgeType Type of collision entity triggers with the edge of the graphical area.
      */
-    public Render(GraphicsContext gc, Scene scene, double width, double height, Color backgroundColor, EdgeType edgeType) {
+    public Render(GraphicsContext gc, Window window, double width, double height, EdgeType edgeType) {
         this.gc = gc;
-        this.keyEventManager = new KeyEventManager(scene);
+        this.keyEventManager = new KeyEventManager(window.getScene());
         characters = new ArrayList<>();
         entities = new ArrayList<>();
         lastTimeICheckedMyWatch = System.nanoTime();
         collisionObserver = new CollisionObserver();
         this.width = width;
         this.height = height;
-        this.backgroundColor = backgroundColor;
         this.edgeType = edgeType;
     }
 
@@ -56,7 +52,6 @@ public class Render extends AnimationTimer {
     @Override
     public void handle(long now) {
         gc.clearRect(0, 0, width, height);
-        gc.setFill(backgroundColor);
         gc.fillRect(0, 0, width, height);
 
         for(Entity e : entities) {
@@ -231,5 +226,10 @@ public class Render extends AnimationTimer {
         }
 
         return collisionOccured;
+    }
+
+    public void removeAll() {
+        entities.removeIf(e -> true);
+        characters.removeIf(e -> true);
     }
 }

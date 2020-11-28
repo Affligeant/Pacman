@@ -1,8 +1,7 @@
 package Gameplay;
 
+import Moteur.Button;
 import Moteur.Window;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.text.Font;
 
 public class MenuWindow extends Window {
@@ -12,7 +11,7 @@ public class MenuWindow extends Window {
     public void init() {
 
         Button playButton = initButton();
-        borderPane.setCenter(playButton);
+        setCenter(playButton);
 
         playButton.setOnAction(event -> {
             GameWindow gameWindow = new GameWindow(height, width);
@@ -23,9 +22,8 @@ public class MenuWindow extends Window {
 
     private Button initButton() {
         Button playButton = new Button("P L A Y");
-        playButton.setMinSize(width/2, height/5);
-        playButton.setAlignment(Pos.CENTER);
-        playButton.setStyle("-fx-border-width: 0px; -fx-background-color: #e77f20;");
+        playButton.setSize(width/2, height/5);
+        playButton.setColor("#e77f20");
         playButton.setFont(new Font("Calibri", width/20));
 
         return playButton;
