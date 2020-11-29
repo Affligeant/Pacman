@@ -25,8 +25,9 @@ public class GameWindow extends Window {
     private Entity number3;
     private Entity looseSign;
     private Entity winSign;
+    private MenuWindow.Difficulty difficulty;
 
-    public GameWindow(double height, double width) { super(height, width + 200); }
+    public GameWindow(double height, double width, MenuWindow.Difficulty difficulty) { super(height, width + 200); this.difficulty = difficulty; initLevels(difficulty); }
 
     public void init() {
 
@@ -50,14 +51,8 @@ public class GameWindow extends Window {
 
         render = new Render(canevas.getGraphicContext(), this, width-200, height, EdgeType.WARP);
 
-        Niveau niveau1;
-        Niveau niveau2;
-        Niveau niveau3;
         try {
             pacman = new Pacman(14 * 30, 23 * 30, TAILLE_CASE, score);
-            niveau1 = new Niveau("src/Gameplay/niveau1.map", 1, Niveau.FruitType.POMME, 1, 1, TAILLE_CASE, width-200, height, pacman);
-            niveau2 = new Niveau("src/Gameplay/niveau2.map", 1.2, Niveau.FruitType.PECHE, 6, 1, TAILLE_CASE, width-200, height, pacman);
-            niveau3 = new Niveau("src/Gameplay/niveau3.map", 1.5, Niveau.FruitType.CERISES, 6, 1, TAILLE_CASE, width-200, height, pacman);
             render.getKeyEventManager().add(new PauseObserver(render, width-200, height), "P");
             double centerXnumber = (width-200) / 2 - 30;
             double centerYnumber = height/2 - 80;
@@ -72,9 +67,26 @@ public class GameWindow extends Window {
         }
 
         render.getKeyEventManager().add((KeyObserver) pacman.getMovableBehavior(), Arrays.asList("UP", "DOWN", "LEFT", "RIGHT", "Z", "Q", "S", "D"));
-        niveaux = new ArrayList<>(Arrays.asList(niveau1, niveau2, niveau3));
 
         render.start();
+    }
+
+    private void initLevels(MenuWindow.Difficulty difficulty) {
+
+        Niveau niveau1;
+        Niveau niveau2;
+        Niveau niveau3;
+
+        try {
+            niveau1 = new Niveau("src/Gameplay/niveau1.map", 1, Niveau.FruitType.POMME, 1, 1, TAILLE_CASE, width - 200, height, pacman, difficulty);
+            niveau2 = new Niveau("src/Gameplay/niveau2.map", 1.2, Niveau.FruitType.PECHE, 6, 1, TAILLE_CASE, width - 200, height, pacman, difficulty);
+            niveau3 = new Niveau("src/Gameplay/niveau3.map", 1.5, Niveau.FruitType.CERISES, 6, 1, TAILLE_CASE, width - 200, height, pacman, difficulty);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        niveaux = new ArrayList<>(Arrays.asList(niveau1, niveau2, niveau3));
     }
 
     public void nextLevel() {
@@ -101,7 +113,7 @@ public class GameWindow extends Window {
 
         PacmanCollisionManager pacmanCollisionManager = new PacmanCollisionManager(pacman, this, n.getElements());
         render.addObserver(pacmanCollisionManager);
-        pacmanCollisionManager.setScoreMultiplier(n.scoreMultiplier);
+        pacmanCollisionManager.setScoreMultiplier(n.getScoreMultiplier());
 
         if(!render.isPaused()) { render.togglePause(); }
 
@@ -196,7 +208,7 @@ public class GameWindow extends Window {
             file.createNewFile();
             FileWriter fw = new FileWriter(path, true);
             BufferedWriter bf = new BufferedWriter(fw);
-            bf.write(String.valueOf(score));
+            bf.write("Score : " + String.valueOf(score) + " Difficulté : " + difficulty);
             bf.newLine();
             bf.close();
             fw.close();
