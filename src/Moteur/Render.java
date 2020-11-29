@@ -3,8 +3,11 @@ package Moteur;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 
 public class Render extends AnimationTimer {
 
@@ -17,6 +20,9 @@ public class Render extends AnimationTimer {
     double width;
     double height;
     EdgeType edgeType;
+    boolean paused;
+    long finPause;
+    HashMap<Executable, Long> pendingActions;
 
     public enum EdgeType {
         NONE, BLOCK, WARP
@@ -42,6 +48,9 @@ public class Render extends AnimationTimer {
         this.width = width;
         this.height = height;
         this.edgeType = edgeType;
+        this.paused = false;
+        this.finPause = 0;
+        this.pendingActions = new HashMap<>();
     }
 
     /**
@@ -51,80 +60,52 @@ public class Render extends AnimationTimer {
      */
     @Override
     public void handle(long now) {
+
+        ArrayList<Executable> actionsTriggered = new ArrayList<>();
+
+        for(Executable e : pendingActions.keySet()) {
+            if(System.currentTimeMillis() >= pendingActions.get(e)) {
+                actionsTriggered.add(e);
+                e.execute();
+            }
+        }
+
+        for(Executable e : actionsTriggered) { pendingActions.remove(e); }
+
         gc.clearRect(0, 0, width, height);
         gc.fillRect(0, 0, width, height);
 
-        for(Entity e : entities) {
-            if(!(e instanceof Character)) {
+        if(!paused) {
+            for (Entity e : entities) {
+                if (!(e instanceof Character)) {
+                    gc.drawImage(e.getSkin(), e.getX(), e.getY());
+                }
+            }
+
+            for (Character c : characters) {
+                c.update();
+                c.move(now - lastTimeICheckedMyWatch);
+                checkEdge(c);
+            }
+
+            while (detectCollisions()) { }
+
+            for (Character c : characters) {
+                gc.drawImage(c.getSkin(), c.getX(), c.getY());
+            }
+
+        }
+        else {
+            for (Entity e : entities) {
                 gc.drawImage(e.getSkin(), e.getX(), e.getY());
             }
         }
 
-        for(Character c : characters) {
-            c.update();
-            c.move(now-lastTimeICheckedMyWatch);
-
-            if(c.getX() > width) {
-                switch (edgeType) {
-                    case BLOCK:
-                        c.setX(width);
-                        break;
-                    case WARP:
-                        c.setX(0);
-                        break;
-                    case NONE:
-                    default:
-                        break;
-                }
-            }
-            else if(c.getX() < 0) {
-                switch (edgeType) {
-                    case BLOCK:
-                        c.setX(0);
-                        break;
-                    case WARP:
-                        c.setX(width);
-                        break;
-                    case NONE:
-                    default:
-                        break;
-                }
-            }
-
-            if(c.getY() > height) {
-                switch (edgeType) {
-                    case BLOCK:
-                        c.setY(height);
-                        break;
-                    case WARP:
-                        c.setY(0);
-                        break;
-                    case NONE:
-                    default:
-                        break;
-                }
-            }
-            else if(c.getY() < 0) {
-                switch (edgeType) {
-                    case BLOCK:
-                        c.setY(0);
-                        break;
-                    case WARP:
-                        c.setY(height);
-                        break;
-                    case NONE:
-                    default:
-                        break;
-                }
-            }
-
-        }
-
         lastTimeICheckedMyWatch = now;
-        while(detectCollisions()){}
 
-        for(Character c : characters) {
-            gc.drawImage(c.getSkin(), c.getX(), c.getY());
+        if(paused && finPause != 0 && now >= finPause) {
+            paused = false;
+            finPause = 0;
         }
     }
 
@@ -201,28 +182,32 @@ public class Render extends AnimationTimer {
 
         boolean collisionOccured = false;
 
-        for(Character c : characters) {
-            for(Entity e : entities) {
-                if(c != e) {
-                    double baseX1 = c.getX();
-                    double baseY1 = c.getY();
-                    double finX1 = baseX1 + c.getWidth() - 1;
-                    double finY1 = baseY1 + c.getHeight() - 1;
+        try {
+            for (Character c : characters) {
+                for (Entity e : entities) {
+                    if (c != e) {
+                        double baseX1 = c.getX();
+                        double baseY1 = c.getY();
+                        double finX1 = baseX1 + c.getWidth() - 1;
+                        double finY1 = baseY1 + c.getHeight() - 1;
 
-                    double baseX2 = e.getX();
-                    double baseY2 = e.getY();
-                    double finX2 = baseX2 + e.getWidth() - 1;
-                    double finY2 = baseY2 + e.getHeight() - 1;
+                        double baseX2 = e.getX();
+                        double baseY2 = e.getY();
+                        double finX2 = baseX2 + e.getWidth() - 1;
+                        double finY2 = baseY2 + e.getHeight() - 1;
 
-                    if(!(finX1 < baseX2) && !(baseX1 > finX2) && !(finY1 < baseY2) && !(baseY1 > finY2)) {
-                        //Alors il y a collision
-                        CollisionEvent ce = new CollisionEvent(c, e, lastTimeICheckedMyWatch);
-                        if(collisionObserver.notify(ce)) {
-                            collisionOccured = true;
+                        if (!(finX1 < baseX2) && !(baseX1 > finX2) && !(finY1 < baseY2) && !(baseY1 > finY2)) {
+                            //Alors il y a collision
+                            CollisionEvent ce = new CollisionEvent(c, e, lastTimeICheckedMyWatch);
+                            if (collisionObserver.notify(ce)) {
+                                collisionOccured = true;
+                            }
                         }
                     }
                 }
             }
+        } catch (ConcurrentModificationException e) {
+            collisionOccured = false;
         }
 
         return collisionOccured;
@@ -231,5 +216,76 @@ public class Render extends AnimationTimer {
     public void removeAll() {
         entities.removeIf(e -> true);
         characters.removeIf(e -> true);
+    }
+
+    public void removeObservers() { collisionObserver.removeObservers(); }
+
+    private void checkEdge (Character c) {
+        if (c.getX() > width) {
+            switch (edgeType) {
+                case BLOCK:
+                    c.setX(width);
+                    break;
+                case WARP:
+                    c.setX(0);
+                    break;
+                case NONE:
+                default:
+                    break;
+            }
+        } else if (c.getX() < 0) {
+            switch (edgeType) {
+                case BLOCK:
+                    c.setX(0);
+                    break;
+                case WARP:
+                    c.setX(width);
+                    break;
+                case NONE:
+                default:
+                    break;
+            }
+        }
+
+        if (c.getY() > height) {
+            switch (edgeType) {
+                case BLOCK:
+                    c.setY(height);
+                    break;
+                case WARP:
+                    c.setY(0);
+                    break;
+                case NONE:
+                default:
+                    break;
+            }
+        } else if (c.getY() < 0) {
+            switch (edgeType) {
+                case BLOCK:
+                    c.setY(0);
+                    break;
+                case WARP:
+                    c.setY(height);
+                    break;
+                case NONE:
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void togglePause() { paused = !paused; }
+
+    public void pause(int duration) {
+        finPause = System.currentTimeMillis() + duration;
+        this.paused = true;
+        System.out.println("ok");
+    }
+
+    public boolean isPaused() { return paused; }
+
+    public void delayExecution(long delay, Executable executable) {
+        long now = System.currentTimeMillis();
+        pendingActions.put(executable, now+delay);
     }
 }

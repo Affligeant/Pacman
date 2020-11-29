@@ -11,12 +11,14 @@ public class MenuWindow extends Window {
     public void init() {
 
         Button playButton = initButton();
+        setColor("black");
         setCenter(playButton);
 
         playButton.setOnAction(event -> {
             GameWindow gameWindow = new GameWindow(height, width);
             gameWindow.show();
             this.hide();
+            gameWindow.nextLevel();
         });
     }
 

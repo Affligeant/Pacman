@@ -5,14 +5,20 @@ import Moteur.CollisionEvent;
 import Moteur.CollisionManager;
 import Moteur.Entity;
 
+import java.util.ArrayList;
+
 public class PacmanCollisionManager implements CollisionManager {
 
     Pacman pacman;
     double scoreMultiplier;
+    GameWindow gameWindow;
+    ArrayList<Entity> elements;
 
-    PacmanCollisionManager(Pacman pacman) {
+    PacmanCollisionManager(Pacman pacman, GameWindow gameWindow, ArrayList<Entity> elements) {
         super();
         this.pacman = pacman;
+        this.gameWindow = gameWindow;
+        this.elements = elements;
         this.scoreMultiplier = 1;
     }
 
@@ -60,6 +66,7 @@ public class PacmanCollisionManager implements CollisionManager {
         if(xIn > pellet.getWidth() / 2 && yIn > pellet.getHeight() / 2) {
             pellet.eat();
             pacman.addScore(10 * scoreMultiplier);
+            if(ateEverything()) { gameWindow.nextLevel(); }
         }
         return false;
     }
@@ -73,6 +80,7 @@ public class PacmanCollisionManager implements CollisionManager {
         if(xIn > special.getWidth() / 3 && yIn > special.getHeight() / 3) {
             special.eat();
             pacman.addScore(50 * scoreMultiplier);
+            if(ateEverything()) { gameWindow.nextLevel(); }
         }
         return false;
     }
@@ -161,6 +169,21 @@ public class PacmanCollisionManager implements CollisionManager {
         }
 
         return false;
+    }
+
+    private boolean ateEverything() {
+
+        for(Entity e : elements) {
+            if(e instanceof Pellet && !((Pellet) e).isAte()) {
+                return false;
+            }
+
+            if(e instanceof SpecialPellet && !((SpecialPellet) e).isAte()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public void setScoreMultiplier(double scoreMultiplier) { this.scoreMultiplier = scoreMultiplier; }

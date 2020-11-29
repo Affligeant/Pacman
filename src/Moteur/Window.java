@@ -40,6 +40,8 @@ public abstract class Window extends Stage {
         borderPane.setRight((Node) we);
     }
 
+    public void setColor(String color) { borderPane.setStyle("-fx-background-color: " + color + ";"); }
+
     /**
      * Called when constructing the window. Specify here everything that needs to be instantiated
      * within the window.

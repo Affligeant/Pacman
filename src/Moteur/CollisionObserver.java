@@ -11,6 +11,8 @@ public class CollisionObserver {
         this.observers = new ArrayList<>();
     }
 
+    public void removeObservers() { observers.removeIf(e -> true); }
+
     public void addObserver(CollisionManager collisionManager) { observers.add(collisionManager); }
 
     public void addObserver(Collection<CollisionManager> collisionManagers) { observers.addAll(collisionManagers); }
