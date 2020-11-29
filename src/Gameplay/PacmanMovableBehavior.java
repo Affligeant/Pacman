@@ -25,23 +25,23 @@ public class PacmanMovableBehavior implements MovableBehavior, KeyObserver {
         switch (input) {
             case "S":
             case "DOWN":
-                c.setvY(1);
+                c.setvY(3);
                 c.setvX(0);
                 break;
             case "Q":
             case "LEFT":
                 c.setvY(0);
-                c.setvX(-1);
+                c.setvX(-3);
                 break;
             case "Z":
             case "UP":
-                c.setvY(-1);
+                c.setvY(-3);
                 c.setvX(0);
                 break;
             case "D":
             case "RIGHT":
                 c.setvY(0);
-                c.setvX(1);
+                c.setvX(3);
                 break;
             default:
                 break;

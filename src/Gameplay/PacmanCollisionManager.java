@@ -40,6 +40,21 @@ public class PacmanCollisionManager implements CollisionManager {
         else if(e2 instanceof Fruit) {
             return pacmanCollidesFruit(pacman, (Fruit) e2);
         }
+        else if(e2 instanceof Fantome) {
+            return pacmanCollidesFantome(pacman, (Fantome) e2);
+        }
+        return false;
+    }
+
+    private boolean pacmanCollidesFantome(Pacman pacman, Fantome fantome) {
+        double xIn = xIn(pacman, fantome);
+        double yIn = yIn(pacman, fantome);
+
+        if(xIn > fantome.getWidth() / 6 && yIn > fantome.getHeight() / 6) {
+            gameWindow.loose();
+            gameWindow.saveScore(Integer.parseInt(pacman.score.getText()));
+        }
+
         return false;
     }
 

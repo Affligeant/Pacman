@@ -5,6 +5,9 @@ import Moteur.Character;
 import Moteur.Render.EdgeType;
 import javafx.scene.paint.Color;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,12 +23,14 @@ public class GameWindow extends Window {
     private Entity number1;
     private Entity number2;
     private Entity number3;
+    private Entity looseSign;
+    private Entity winSign;
 
     public GameWindow(double height, double width) { super(height, width + 200); }
 
     public void init() {
 
-        Canevas canevas = new Canevas(width-200, height);
+        Canevas canevas = new Canevas(width - 200, height);
         canevas.setBackground(Color.BLACK);
         setCenter(canevas);
 
@@ -59,6 +64,8 @@ public class GameWindow extends Window {
             number1 = new Entity(centerXnumber, centerYnumber, "src/Images/number1.png", 100, 60, false);
             number2 = new Entity(centerXnumber, centerYnumber, "src/Images/number2.png", 100, 60, false);
             number3 = new Entity(centerXnumber, centerYnumber, "src/Images/number3.png", 100, 60, false);
+            looseSign = new Entity((width-200) / 2 - 300, height / 2 - 170, "src/Images/GameOver.png", 340, 600, false);
+            winSign = new Entity((width-200)/ 2 - 150, height / 2 - 200, "src/Images/win.png", 400, 400, false);
         } catch (IOException e) {
             e.printStackTrace();
             return;
@@ -83,6 +90,7 @@ public class GameWindow extends Window {
         render.removeObservers();
 
         //Ajout des entités du niveau suivant
+        if(niveaux.size() == 0) { win(); return;}
         Niveau n = niveaux.remove(0);
         niveau.setText(String.valueOf(Integer.parseInt(niveau.getText()) + 1));
         render.addEntity(n.getElements());
@@ -110,6 +118,12 @@ public class GameWindow extends Window {
             render.removeEntity(number1);
             render.togglePause();
         });
+    }
+
+    private void win() {
+        if(!render.isPaused()) { render.togglePause(); }
+        render.addEntity(winSign);
+        saveScore(Integer.parseInt(pacman.score.getText()));
     }
 
     private Area initInformationPanel(Text score, Text niveau) {
@@ -166,5 +180,28 @@ public class GameWindow extends Window {
         informationArea.setBottom((WindowElement) scoreInfos);
 
         return informationPanelBox;
+    }
+
+    public void loose() {
+        if(!render.isPaused()) { render.togglePause(); }
+        render.addEntity(looseSign);
+    }
+
+    public void saveScore(int score) {
+
+        String path = "src/scores.txt";
+
+        File file = new File(path);
+        try {
+            file.createNewFile();
+            FileWriter fw = new FileWriter(path, true);
+            BufferedWriter bf = new BufferedWriter(fw);
+            bf.write(String.valueOf(score));
+            bf.newLine();
+            bf.close();
+            fw.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 }
