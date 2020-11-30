@@ -25,7 +25,7 @@ public class GameWindow extends Window {
     private Entity number3;
     private Entity looseSign;
     private Entity winSign;
-    private MenuWindow.Difficulty difficulty;
+    private final MenuWindow.Difficulty difficulty;
 
     public GameWindow(double height, double width, MenuWindow.Difficulty difficulty) { super(height, width + 200); this.difficulty = difficulty; initLevels(difficulty); }
 
@@ -208,7 +208,7 @@ public class GameWindow extends Window {
             file.createNewFile();
             FileWriter fw = new FileWriter(path, true);
             BufferedWriter bf = new BufferedWriter(fw);
-            bf.write("Score : " + String.valueOf(score) + " Difficulté : " + difficulty);
+            bf.write("Score : " + score + " Difficulté : " + difficulty);
             bf.newLine();
             bf.close();
             fw.close();

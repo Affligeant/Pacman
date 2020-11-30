@@ -1,7 +1,12 @@
 package Gameplay;
 
-import Moteur.*;
-import javafx.scene.text.Font;
+import Moteur.Area;
+import Moteur.Button;
+import Moteur.RadioButton;
+import Moteur.RadioButtonGroup;
+import Moteur.Text;
+import Moteur.Window;
+import Moteur.WindowElement;
 
 public class MenuWindow extends Window {
 
@@ -32,7 +37,7 @@ public class MenuWindow extends Window {
         Button playButton = new Button("P L A Y");
         playButton.setSize(width/2, height/5);
         playButton.setColor("#e77f20");
-        playButton.setFont(new Font("Calibri", width/20));
+        playButton.setTextSize((int) width/15);
 
         return playButton;
     }
@@ -59,30 +64,11 @@ public class MenuWindow extends Window {
         hard.setTextColor("Coral");
 
         RadioButtonGroup diffRadGroup = new RadioButtonGroup();
-        easy.setToggleGroup(diffRadGroup);
-        classic.setToggleGroup(diffRadGroup);
-        hard.setToggleGroup(diffRadGroup);
+        diffRadGroup.ajout(easy);
+        diffRadGroup.ajout(classic);
+        diffRadGroup.ajout(hard);
 
-        Area difficultyArea = new Area(width, height/4);
-
-        Area centerLeftLeftPart = new Area(width/4, height/4);
-        centerLeftLeftPart.setCenter((WindowElement) diffLabel);
-        Area centerLeftRightPart = new Area(width/4, height/4);
-        centerLeftRightPart.setCenter((WindowElement) easy);
-        Area centerLeftPart = new Area(width/2, height/4);
-        centerLeftPart.setLeft((WindowElement) centerLeftLeftPart);
-        centerLeftPart.setRight((WindowElement) centerLeftRightPart);
-        difficultyArea.setLeft((WindowElement) centerLeftPart);
-
-        Area centerRightLeftPart = new Area(width/4, height/4);
-        centerRightLeftPart.setCenter((WindowElement) classic);
-        Area centerRightRightPart = new Area(width/4, height/4);
-        centerRightRightPart.setCenter((WindowElement) hard);
-        Area centerRightPart = new Area(width/2, height/4);
-        centerRightPart.setLeft((WindowElement) centerRightLeftPart);
-        centerRightPart.setRight((WindowElement) centerRightRightPart);
-        difficultyArea.setRight((WindowElement) centerRightPart);
-
+        Area difficultyArea = Area.centerAll(Area.Center.HORIZONTAL, width, height / 4, diffLabel, easy, classic, hard);
         difficultyArea.setBottom((WindowElement) new Area(width, height/6));
 
         diffRadGroup.selectedToggleProperty().addListener((ob, ov, nv) -> {
