@@ -18,6 +18,7 @@ public class PacmanMovableBehavior implements MovableBehavior, KeyObserver {
     @Override
     public void update(Movable entity) {
         Pacman c = (Pacman) entity;
+        c.addFrameSkinCycle();
 
         c.setOld_vX(c.getvX());
         c.setOld_vY(c.getvY());

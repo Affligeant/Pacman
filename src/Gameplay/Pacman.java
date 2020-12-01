@@ -1,6 +1,7 @@
 package Gameplay;
 
 import Moteur.Character;
+import Moteur.Image;
 import Moteur.Text;
 
 import java.io.FileNotFoundException;
@@ -13,6 +14,11 @@ public class Pacman extends Character {
     int ySpeedFactor;
     long accelerateStateEnd;
     boolean accelerated;
+    Image bas;
+    Image haut;
+    Image droite;
+    Image gauche;
+    int frameSkinCycle;
 
     /**
      * @param x               Position {@code x} of Pacman.
@@ -25,6 +31,11 @@ public class Pacman extends Character {
         this.score = score;
         xSpeedFactor = 1;
         ySpeedFactor = 1;
+        haut = new Image("src/Images/pacman_haut.png", size, size);
+        gauche = new Image("src/Images/pacman_gauche.png", size, size);
+        droite = new Image("src/Images/pacman_droit.png", size, size);
+        bas = new Image("src/Images/pacman_bas.png", size, size);
+        frameSkinCycle = 0;
     }
 
     public void addScore(double amount) {
@@ -58,4 +69,30 @@ public class Pacman extends Character {
     }
 
     public boolean isAccelerated() { return accelerated; }
+
+    @Override
+    public Image getSkin() {
+        if(frameSkinCycle < 10) {
+            return super.getSkin();
+        }
+        else {
+            if(getvY() > 0) {
+                return bas;
+            }
+            else if (getvY() < 0) {
+                return haut;
+            }
+            else if(getvX() > 0) {
+                return droite;
+            }
+            else if(getvX() < 0) {
+                return gauche;
+            }
+            else {
+                return super.getSkin();
+            }
+        }
+    }
+
+    public void addFrameSkinCycle() { frameSkinCycle = (frameSkinCycle + 1) % 20; }
 }
