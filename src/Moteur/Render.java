@@ -3,7 +3,6 @@ package Moteur;
 import javafx.animation.AnimationTimer;
 import javafx.scene.canvas.GraphicsContext;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
@@ -22,7 +21,9 @@ public class Render extends AnimationTimer {
     EdgeType edgeType;
     boolean paused;
     long finPause;
+    long debutPause;
     HashMap<Executable, Long> pendingActions;
+    HashMap<Executable, Boolean> waitingActions;
 
     public enum EdgeType {
         NONE, BLOCK, WARP
@@ -49,8 +50,8 @@ public class Render extends AnimationTimer {
         this.height = height;
         this.edgeType = edgeType;
         this.paused = false;
-        this.finPause = 0;
         this.pendingActions = new HashMap<>();
+        this.waitingActions = new HashMap<>();
     }
 
     /**
@@ -64,13 +65,13 @@ public class Render extends AnimationTimer {
         ArrayList<Executable> actionsTriggered = new ArrayList<>();
 
         for(Executable e : pendingActions.keySet()) {
-            if(System.currentTimeMillis() >= pendingActions.get(e)) {
+            if((!paused && System.currentTimeMillis() >= pendingActions.get(e)) || (paused && !waitingActions.get(e) && System.currentTimeMillis() >= pendingActions.get(e))) {
                 actionsTriggered.add(e);
                 e.execute();
             }
         }
 
-        for(Executable e : actionsTriggered) { pendingActions.remove(e); }
+        for(Executable e : actionsTriggered) { pendingActions.remove(e); waitingActions.remove(e); }
 
         gc.clearRect(0, 0, width, height);
         gc.fillRect(0, 0, width, height);
@@ -274,18 +275,27 @@ public class Render extends AnimationTimer {
         }
     }
 
-    public void togglePause() { paused = !paused; }
-
-    public void pause(int duration) {
-        finPause = System.currentTimeMillis() + duration;
-        this.paused = true;
-        System.out.println("ok");
+    public void togglePause() {
+        if(!paused) { debutPause = System.currentTimeMillis(); }
+        if(paused) {
+            for(Executable e : pendingActions.keySet()) {
+                if(waitingActions.get(e)) {
+                    pendingActions.put(e, pendingActions.get(e) + System.currentTimeMillis() - debutPause);
+                }
+            }
+        }
+        paused = !paused;
     }
 
     public boolean isPaused() { return paused; }
 
-    public void delayExecution(long delay, Executable executable) {
+    public void delayExecution(long delay, boolean waitsForBreaks, Executable executable) {
         long now = System.currentTimeMillis();
         pendingActions.put(executable, now+delay);
+        waitingActions.put(executable, waitsForBreaks);
+    }
+
+    public void delayExecution(long delay, Executable executable) {
+        delayExecution(delay, false, executable);
     }
 }

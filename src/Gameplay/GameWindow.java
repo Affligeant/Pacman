@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -26,6 +27,7 @@ public class GameWindow extends Window {
     private Entity looseSign;
     private Entity winSign;
     private final MenuWindow.Difficulty difficulty;
+    private PauseObserver pauseObserver;
 
     public GameWindow(double height, double width, MenuWindow.Difficulty difficulty) { super(height, width + 200); this.difficulty = difficulty; initLevels(difficulty); }
 
@@ -53,7 +55,8 @@ public class GameWindow extends Window {
 
         try {
             pacman = new Pacman(14 * 30, 23 * 30, TAILLE_CASE, score);
-            render.getKeyEventManager().add(new PauseObserver(render, width-200, height), "P");
+            pauseObserver = new PauseObserver(render, width-200, height, pacman);
+            render.getKeyEventManager().add(pauseObserver, "P");
             double centerXnumber = (width-200) / 2 - 30;
             double centerYnumber = height/2 - 80;
             number1 = new Entity(centerXnumber, centerYnumber, "src/Images/number1.png", 100, 60, false);
@@ -96,6 +99,7 @@ public class GameWindow extends Window {
         pacman.setY(23 * 30);
         pacman.setvX(0);
         pacman.setvY(0);
+        pacman.stopAcceleration();
 
         //Retrait de toutes les entités et collisionManager
         render.removeAll();
@@ -106,13 +110,18 @@ public class GameWindow extends Window {
         Niveau n = niveaux.remove(0);
         niveau.setText(String.valueOf(Integer.parseInt(niveau.getText()) + 1));
         render.addEntity(n.getElements());
+        ArrayList<Fantome> fantomes = new ArrayList<>();
         for(Character c : n.getCharacters()) {
             render.addEntity(c);
+            if(c instanceof Fantome) { fantomes.add((Fantome) c); }
         }
         render.addEntity(pacman);
+        pauseObserver.setFantomes(fantomes);
 
-        PacmanCollisionManager pacmanCollisionManager = new PacmanCollisionManager(pacman, this, n.getElements());
+
+        PacmanCollisionManager pacmanCollisionManager = new PacmanCollisionManager(pacman, this, n.getElements(), render);
         render.addObserver(pacmanCollisionManager);
+        pacmanCollisionManager.setFantomes(fantomes);
         pacmanCollisionManager.setScoreMultiplier(n.getScoreMultiplier());
 
         if(!render.isPaused()) { render.togglePause(); }

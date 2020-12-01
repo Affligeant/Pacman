@@ -23,7 +23,7 @@ public class Niveau {
     double scoreMultiplier;
     MenuWindow.Difficulty difficulty;
 
-    public Niveau(String filepath, double scoreMultiplier, FruitType fruitType, int firstNodeX, int firstNodeY, double tailleCase, double xMax, double yMax, Character pacman, MenuWindow.Difficulty difficulty) throws IOException {
+    public Niveau(String filepath, double scoreMultiplier, FruitType fruitType, int firstNodeX, int firstNodeY, double tailleCase, double xMax, double yMax, Pacman pacman, MenuWindow.Difficulty difficulty) throws IOException {
         this.graph = Tools.constructGraph(tailleCase, firstNodeX, firstNodeY, Arrays.asList(1, 4), filepath);
         this.elements = Tools.mapFromFile(filepath, tailleCase, new PacmanEntityFactory());
         this.scoreMultiplier = scoreMultiplier;
@@ -32,7 +32,7 @@ public class Niveau {
         initCharacters(xMax, yMax, pacman, tailleCase, fruitType);
     }
 
-    private void initCharacters(double xMax, double yMax, Character pacman, double tailleChar, FruitType fruitType) throws FileNotFoundException {
+    private void initCharacters(double xMax, double yMax, Pacman pacman, double tailleChar, FruitType fruitType) throws FileNotFoundException {
 
         switch(fruitType) {
             case PECHE:
@@ -51,9 +51,9 @@ public class Niveau {
 
         switch (difficulty) {
             case EASY:
-                RandomFantomMovableBehavior inkyB = new RandomFantomMovableBehavior(graph);
-                RandomFantomMovableBehavior inky2B = new RandomFantomMovableBehavior(graph);
-                RandomFantomMovableBehavior inky3B = new RandomFantomMovableBehavior(graph);
+                RandomFantomMovableBehavior inkyB = new RandomFantomMovableBehavior(graph, pacman);
+                RandomFantomMovableBehavior inky2B = new RandomFantomMovableBehavior(graph, pacman);
+                RandomFantomMovableBehavior inky3B = new RandomFantomMovableBehavior(graph, pacman);
 
                 Fantome inkyE = new Fantome("src/Images/inky.png", tailleChar, inkyB);
                 Fantome inkyE2 = new Fantome("src/Images/inky.png", tailleChar, inky2B);
@@ -63,8 +63,8 @@ public class Niveau {
                 break;
 
             case CLASSIC:
-                RandomFantomMovableBehavior inkyCB = new RandomFantomMovableBehavior(graph);
-                RandomFantomMovableBehavior inkyC2B = new RandomFantomMovableBehavior(graph);
+                RandomFantomMovableBehavior inkyCB = new RandomFantomMovableBehavior(graph, pacman);
+                RandomFantomMovableBehavior inkyC2B = new RandomFantomMovableBehavior(graph, pacman);
                 SemirandomFantomMovableBehavior clydeCB = new SemirandomFantomMovableBehavior(graph, pacman);
                 SemirandomFantomMovableBehavior clydeC2B = new SemirandomFantomMovableBehavior(graph, pacman);
 
@@ -77,7 +77,7 @@ public class Niveau {
                 break;
 
             case HARD:
-                RandomFantomMovableBehavior inkyBehavior = new RandomFantomMovableBehavior(graph);
+                RandomFantomMovableBehavior inkyBehavior = new RandomFantomMovableBehavior(graph, pacman);
                 SemirandomFantomMovableBehavior clydeBehavior = new SemirandomFantomMovableBehavior(graph, pacman);
                 AnticipateFantomBehavior pinkyBehavior = new AnticipateFantomBehavior(graph, pacman, xMax, yMax);
                 FollowFantomBehavior blinkyBehavior = new FollowFantomBehavior(graph, pacman);

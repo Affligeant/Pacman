@@ -1,9 +1,7 @@
 package Gameplay;
 
+import Moteur.*;
 import Moteur.Character;
-import Moteur.CollisionEvent;
-import Moteur.CollisionManager;
-import Moteur.Entity;
 
 import java.util.ArrayList;
 
@@ -13,12 +11,15 @@ public class PacmanCollisionManager implements CollisionManager {
     double scoreMultiplier;
     GameWindow gameWindow;
     ArrayList<Entity> elements;
+    Render render;
+    ArrayList<Fantome> fantomes;
 
-    PacmanCollisionManager(Pacman pacman, GameWindow gameWindow, ArrayList<Entity> elements) {
+    PacmanCollisionManager(Pacman pacman, GameWindow gameWindow, ArrayList<Entity> elements, Render render) {
         super();
         this.pacman = pacman;
         this.gameWindow = gameWindow;
         this.elements = elements;
+        this.render = render;
         this.scoreMultiplier = 1;
     }
 
@@ -51,8 +52,16 @@ public class PacmanCollisionManager implements CollisionManager {
         double yIn = yIn(pacman, fantome);
 
         if(xIn > fantome.getWidth() / 6 && yIn > fantome.getHeight() / 6) {
-            gameWindow.loose();
-            gameWindow.saveScore(Integer.parseInt(pacman.score.getText()));
+            if(fantome.isScared()) {
+                if(!fantome.isEaten()) {
+                    pacman.addScore(300*scoreMultiplier);
+                    fantome.eat();
+                }
+            }
+            else {
+                gameWindow.loose();
+                gameWindow.saveScore(Integer.parseInt(pacman.score.getText()));
+            }
         }
 
         return false;
@@ -95,7 +104,13 @@ public class PacmanCollisionManager implements CollisionManager {
         if(xIn > special.getWidth() / 3 && yIn > special.getHeight() / 3) {
             special.eat();
             pacman.addScore(50 * scoreMultiplier);
-            if(ateEverything()) { gameWindow.nextLevel(); }
+            if(ateEverything()) { gameWindow.nextLevel(); return false; }
+            pacman.accelerate(8000);
+            for(Fantome f : fantomes) {
+                if(((FantomMovableBehavior) f.getMovableBehavior()).hasStarted()) {
+                    f.scare(8000);
+                }
+            }
         }
         return false;
     }
@@ -202,4 +217,5 @@ public class PacmanCollisionManager implements CollisionManager {
     }
 
     public void setScoreMultiplier(double scoreMultiplier) { this.scoreMultiplier = scoreMultiplier; }
+    public void setFantomes(ArrayList<Fantome> fantomes) { this.fantomes = fantomes; }
 }
