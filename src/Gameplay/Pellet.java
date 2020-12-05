@@ -3,7 +3,6 @@ package Gameplay;
 import Moteur.Entity;
 import Moteur.Image;
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
 public class Pellet extends Entity {

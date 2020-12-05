@@ -3,7 +3,6 @@ package Gameplay;
 import Moteur.KeyObserver;
 import Moteur.Movable;
 import Moteur.MovableBehavior;
-import Moteur.Character;
 
 public class PacmanMovableBehavior implements MovableBehavior, KeyObserver {
 

@@ -3,6 +3,8 @@ package Gameplay;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.net.MalformedURLException;
+
 public class Main extends Application {
 
     @Override

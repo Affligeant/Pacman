@@ -51,8 +51,6 @@ public class Fantome extends Character {
         }
     }
 
-    public long getScareEnd() { return scareEnd; }
-
     public void stopScare() { this.scared = false; }
 
     public void eat() {

@@ -1,12 +1,6 @@
 package Gameplay;
 
-import Moteur.Area;
-import Moteur.Button;
-import Moteur.RadioButton;
-import Moteur.RadioButtonGroup;
-import Moteur.Text;
-import Moteur.Window;
-import Moteur.WindowElement;
+import Moteur.*;
 
 public class MenuWindow extends Window {
 
